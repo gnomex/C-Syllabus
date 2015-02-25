@@ -44,8 +44,9 @@ int main(int argc, char const *argv[]) {
 
   strrev(str_1);
 
-  printf("%s\n", str_1);
+  printf("Reversed is: %s\n", str_1);
 
+  free(str_1);
 
   return 0;
 }

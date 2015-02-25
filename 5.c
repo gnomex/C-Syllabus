@@ -53,5 +53,8 @@ int main(int argc, char const *argv[]) {
     printf("You do not wrote a palindrome word. Try again. Check it: %s are not equals to %s\n", str_1, aux);
   }
 
+  free(str_1);
+  free(aux);
+
   return 0;
 }

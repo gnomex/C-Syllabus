@@ -51,5 +51,10 @@ int main(int argc, char const *argv[]) {
     printf("Invalid string \n");
   }
 
+  free(str_1);
+  free(str_2);
+  free(str_3);
+  free(str_4);
+
   return 0;
 }

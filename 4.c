@@ -45,5 +45,7 @@ int main(int argc, char const *argv[]) {
 
   mark_and_replace('a', 'b', str_1);
 
+  free(str_1);
+
   return 0;
 }

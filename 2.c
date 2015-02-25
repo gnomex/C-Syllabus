@@ -36,5 +36,7 @@ int main(int argc, char const *argv[]) {
 
   printf("String content: %s, and string lenght: %i\n", str_1, size_of_string);
 
+  free(str_1);
+
   return 0;
 }
