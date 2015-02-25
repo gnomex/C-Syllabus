@@ -9,3 +9,6 @@ CFLAGS = -g -Wall -o
 
 3: 3.c
 	$(CC) $(CFLAGS) exe3 3.c
+
+4: 4.c
+	$(CC) $(CFLAGS) exe4 4.c
