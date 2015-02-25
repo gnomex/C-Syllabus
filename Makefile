@@ -15,3 +15,6 @@ CFLAGS = -g -Wall -o
 
 5: 5.c
 	$(CC) $(CFLAGS) exe5 5.c
+
+8: 8.c
+	$(CC) $(CFLAGS) exe8 8.c
