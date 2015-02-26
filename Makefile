@@ -34,6 +34,9 @@ CFLAGS = -g -Wall -o
 11: 11.c
 	$(CC) $(CFLAGS) exe11 11.c
 
+teste: teste.c
+	$(CC) $(CFLAGS) teste_arrow teste.c
+
 all: 1 2 3 4 5 6 7 8 9 10
 
 clean:
