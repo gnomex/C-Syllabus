@@ -25,21 +25,23 @@ void show_multi_array(int matrix[ROWS][COLUMNS]) {
   }
 }
 
+void show_multi_array_ptr(int *matrix) {
+  int i = 0;
+  for (; i < ROWS; i++)  {
+    int j = 0;
+
+    for ( ; j < COLUMNS; j++)  {
+      printf("[Row: %i][Column: %i] -> {%d} \n", i, j, matrix[i*COLUMNS +j] );
+    }
+  }
+}
+
 int main(int argc, char const *argv[])  {
   int valid_puzzle[ROWS][COLUMNS] = { {1,2,3,4}, {5,6,7,8}, {9,10,11,0} };
 
   show_multi_array(valid_puzzle);
 
-  // int i = 0;
-  // for (; i < ROWS; i++)  {
-  //   int j = 0;
-
-  //   for ( ; j < COLUMNS; j++)  {
-  //     printf("[Row: %i][Column: %i] -> {%d} \n", i, j, valid_puzzle[i][j] );
-  //   }
-  // }
-
-  // int sorted_puzzle[COLUMNS][ROWS] = {0};
+  show_multi_array_ptr(&valid_puzzle);
 
   return 0;
 }
