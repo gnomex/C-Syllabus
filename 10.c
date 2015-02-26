@@ -65,24 +65,3 @@ int main()
 
   return 0;
 }
-
-
-// Bissexto = "NAO";
-
-// if (ano % 400 == 0) { Bissexto = "SIM";
-
-// }
-
-// else
-
-// {
-
-// if(ano%4 == 0 && ano%100!=0)
-
-// {
-
-// Bissexto = "SIM";
-
-//   }
-
-// }
