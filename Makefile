@@ -25,7 +25,10 @@ CFLAGS = -g -Wall -o
 8: 8.c
 	$(CC) $(CFLAGS) exe8 8.c
 
-all: 1 2 3 4 5 8
+9: 9.c
+	$(CC) $(CFLAGS) exe9 9.c -lm
+
+all: 1 2 3 4 5 6 7 8
 
 clean:
 	rm -rf exe*
