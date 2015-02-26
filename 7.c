@@ -4,7 +4,7 @@
 
 #define BUFFER_LIMIT 12
 #define DECIMAL 10
-#define ARRAY_SIZE 10
+#define ARRAY_SIZE 30
 
 int posix_reader()  {
   int number;
@@ -29,12 +29,18 @@ long alternative_reader()  {
   return number;
 }
 
-void reverse_a_array(int *src, int *dst)  {
+/*
+  even: two times the original value
+  odd: three times the original value
+*/
+void criteria_mul(int *src, int *dst)  {
   int i = 0;
-  int j = ARRAY_SIZE - 1;
   for ( ; i < ARRAY_SIZE; ++i) {
-    dst[j] = src[i];
-    j--;
+    if ((i % 2) == 0)  {
+      dst[i] = src[i] * 2;
+    } else {
+      dst[i] = src[i] * 3;
+    }
   }
 }
 
@@ -42,7 +48,6 @@ void populate_a_array_with_user_input(int *array)  {
   int i = 0;
   for ( ; i < ARRAY_SIZE; ++i)  {
     array[i] = posix_reader();
-    // array[i] = alternative_reader();
   }
 }
 
@@ -56,15 +61,15 @@ void show_elements_from_array(int *array, char *optnional_message) {
 int main()  {
 
   int array[ARRAY_SIZE] = {0};
-  int reversed_array[ARRAY_SIZE] = {0};
+  int fake_array[ARRAY_SIZE] = {0};
 
   populate_a_array_with_user_input(array);
 
   show_elements_from_array(array, "First");
 
-  reverse_a_array(array, reversed_array);
+  criteria_mul(array, fake_array);
 
-  show_elements_from_array(reversed_array, "Reversed");
+  show_elements_from_array(fake_array, "After criteria mul");
 
   return(0);
 }
