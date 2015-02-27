@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define COLUMNS 4
 #define ROWS 4
@@ -9,14 +10,13 @@
 #define RIGHT 3
 #define LEFT 4
 
-int posix_reader(char *str)  {
-  int number;
+char posix_reader() {
+  char str;
 
-  printf("Digit the %s: ", str);
   fflush(stdout); //wait for the prompt to be written on the screen
-  scanf("%d",&number);
+  scanf("%c",&str);
 
-  return number;
+  return str;
 }
 
 void show_multi_array(int matrix[ROWS][COLUMNS]) {
@@ -130,7 +130,6 @@ int make_movement_on_puzzle(int *matrix, int arrow, int x, int y) {
       new_y = y - 1;
       is_valid = on_puzzle(new_x, new_y);
       break;
-    // default : /* Optional */
     }
 
     if (!is_valid)  {
@@ -164,9 +163,63 @@ int find_pivot(int *matrix, int *i_x, int *i_y) {
   return 0;
 }
 
+// int insert(int number, int *array)  {
+//   int i = 0;
+//   int aux = 0;
+//   int limit = COLUMNS * ROWS;
+
+//   for ( ; i < limit; ++i)  {
+//     aux = array[i * COLUMNS];
+
+//     if (aux == number){
+//       return 0;
+//     }
+//     if(aux == -1) {
+//       aux = number;
+//       return 1;
+//     }
+//   }
+//   return 2;
+// }
+
+
+// void generate_random_array(int *sorted)  {
+//   int aux = 0;
+
+//   srand(time(NULL));
+
+//   do{
+//     aux = rand() % 15;
+//   } while( insert(aux, sorted) != 2 ) ;
+// }
+
+// void sort_puzzle(int *puzzle) {
+//   int i = 0;
+// }
+
+// int main(int argc, char const *argv[])
+// {
+//   int sorted[COLUMNS * ROWS];
+
+//   int i = 0;
+//   for (; i < 16; ++i) {
+//     sorted[i] = -1;
+//   }
+
+//   generate_random_array(sorted);
+
+//   i = 0;
+//   for (; i < 16; ++i) {
+//     printf("%i,", sorted[i]);
+//   }
+
+//   return 0;
+// }
+
+
 int main(int argc, char const *argv[])  {
   int valid_puzzle[ROWS][COLUMNS] = { {1,2,3,4}, {5,6,7,8}, {9,10,11,12}, {13,14,15,0} };
-  int puzzle[ROWS][COLUMNS] = { {5,6,7,8}, {9,10,11,12}, {1,2,3,4}, {13,14,15,0} };
+  int puzzle[ROWS][COLUMNS] = { {5,6,7,0}, {9,10,11,12}, {1,2,3,4}, {13,14,15,8} };
 
   // show_multi_array(valid_puzzle);
   show_multi_array_ptr(&puzzle);
@@ -180,19 +233,9 @@ int main(int argc, char const *argv[])  {
   // printf("%i %i\n", pivot_x, pivot_y);
 
   do{
-
     find_pivot(&puzzle, &pivot_x, &pivot_y);
 
-    ch=getchar();
-
-    //      if(ch==65)
-    //         make_movement_on_puzzle(&puzzle, UP, pivot_x, pivot_y); // ARGH!!! Check the return value!
-    //      else if(ch==66)
-    //         make_movement_on_puzzle(&puzzle, DOWN, pivot_x, pivot_y);
-    //      else if(ch==67)
-    //         make_movement_on_puzzle(&puzzle, RIGHT, pivot_x, pivot_y);
-    //      else if(ch==68)
-    //         make_movement_on_puzzle(&puzzle, LEFT, pivot_x, pivot_y);
+    ch = posix_reader();
 
     switch(ch){
     case 65 :
@@ -214,7 +257,7 @@ int main(int argc, char const *argv[])  {
 
     show_multi_array_ptr(&puzzle);
 
-  }while(!check_if_win(&valid_puzzle, &puzzle));
+  } while ( !check_if_win(&valid_puzzle, &puzzle) );
 
   return 0;
 }

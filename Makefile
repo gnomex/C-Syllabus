@@ -32,7 +32,7 @@ CFLAGS = -g -Wall -o
 	$(CC) $(CFLAGS) exe10 10.c -lm
 
 11: 11.c
-	$(CC) $(CFLAGS) exe11 11.c
+	$(CC) $(CFLAGS) exe11 11.c -lm
 
 teste: teste.c
 	$(CC) $(CFLAGS) teste_arrow teste.c
