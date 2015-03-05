@@ -8,7 +8,7 @@ float check_discount(float fixed, float unit_price, int quantity)  {
 
 int main(int argc, char const *argv[]) {
 
-  int quantity = 100;
+  int quantity = 25;
 
   float criteria_A = 0.25;
   float fixed_A = 7.50;

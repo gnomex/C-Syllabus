@@ -25,13 +25,7 @@ void do_nothing(double value)  {
 
 int main(int argc, char const *argv[]) {
 
-  do_nothing(12.79);
-
-  do_nothing(1500.0);
-
-  do_nothing(99.01);
-
-  do_nothing(18.67);
+  do_nothing(99.60);
 
   return 0;
 }

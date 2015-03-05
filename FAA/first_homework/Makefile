@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS = -g -Wall -o
+CFLAGS = -g -Wall -fstack-protector -o
 
 1: 1.c
 	$(CC) $(CFLAGS) exe1 1.c
@@ -34,10 +34,7 @@ CFLAGS = -g -Wall -o
 11: 11.c
 	$(CC) $(CFLAGS) exe11 11.c -lm
 
-teste: teste.c
-	$(CC) $(CFLAGS) teste_arrow teste.c
-
-all: 1 2 3 4 5 6 7 8 9 10
+all: 1 2 3 4 5 6 7 8 9 10 11
 
 clean:
 	rm -rf exe*
