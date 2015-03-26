@@ -1,0 +1,43 @@
+CC       = gcc
+CFLAGS   = -g -O2 -Wall -fstack-protector -ggdb
+LINKER   = gcc -o
+LFLAGS   = -Wall -I. -lm
+
+TARGET   = encrypter
+
+M				 = `pwd`
+CKFLAGS  = -isystem /lib/modules/`uname -r`/build
+
+SRCDIR   = src
+OBJDIR   = obj
+BINDIR   = bin
+
+SOURCES  := $(wildcard $(SRCDIR)/*.c)
+INCLUDES := $(wildcard $(SRCDIR)/*.h)
+OBJECTS  := $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+rm       = rm -f
+
+$(BINDIR)/$(TARGET): $(OBJECTS)
+	@$(LINKER) $@ $(LFLAGS) $(OBJECTS)
+	@echo "Linking complete!"
+
+$(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
+	@$(CC) $(CFLAGS) -c $< -o $@
+	@echo "Compiled "$<" successfully!"
+
+.PHONEY: clean
+clean:
+	@$(rm) $(OBJECTS)
+	@echo "Cleanup complete!"
+
+.PHONEY: remove
+remove: clean
+	@$(rm) $(BINDIR)/$(TARGET)
+	@echo "Executable removed!"
+
+
+# all: ${OBJ}
+# 	${CC} ${CFLAGS} ${OBJ} -o ${TARGET}
+
+# encrypt.o: encrypt.c encrypt.h
+# 	${CC} ${CFLAGS} -c $@
