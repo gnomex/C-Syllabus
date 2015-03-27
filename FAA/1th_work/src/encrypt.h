@@ -13,13 +13,13 @@
 
 typedef struct _Buffer {
   char *data;
-  int length;
+  size_t length;
 } t_buffer;
 
 typedef void (*fptr)(void);
 
-// fptr  ptrs[3] = { NULL, another_thing, something };
+t_buffer* give_me_a_buffer( size_t size );
 
-// int main(int argc, char const *argv[]);
+// fptr  ptrs[3] = { NULL, another_thing, something };
 
 #endif /* !ENCRYPTER */
