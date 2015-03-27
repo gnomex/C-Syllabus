@@ -19,6 +19,7 @@ typedef struct _Buffer {
 typedef void (*fptr)(void);
 
 t_buffer* give_me_a_buffer( size_t size );
+void strrev(char *p);
 
 // fptr  ptrs[3] = { NULL, another_thing, something };
 
