@@ -1,5 +1,39 @@
 #include "lib_crypt.h"
 
+// int crypt( char *password, char *salt ) {
+
+// }
+
+unsigned char rotate_carry_left_of_char( const unsigned char ch, const unsigned char d )  {
+  // unsigned char x = (ch + d); // Auto overflow control
+  unsigned short int x = (ch + d); // By-hands overflow control
+
+  printf("PF-DEBUG: %c[%u] + %c[%u] = %u \n",ch, ch, d, d, x );
+
+  if ( x > CH_HIGHER ) {
+    return CH_LOWER + ( x - CH_HIGHER );
+  }
+
+  return x;
+}
+
+unsigned char rotate_carry_rigth_of_char( const unsigned char ch, const unsigned char d )  {
+  // unsigned char x = ch - d; // Auto overflow control
+  short int x = (ch - d);
+
+  printf("PF-DEBUG: %c[%u] - %c[%u] = %d \n",ch, ch, d, d, x );
+
+  if ( x < CH_LOWER ) {
+    return CH_HIGHER + ( x + CH_LOWER );
+  }
+
+  return x;
+}
+
+unsigned char test_lol( int a, int b, f_rotate c) {
+  return 'A';
+}
+
 // size_t find_the_size_of_text_file( FILE *file ) {
 //   size_t size = 0;
 
@@ -82,8 +116,12 @@ void reverse_me( char *p )  {
 /**
   Error handler
 */
-void die( char *message ) {
-  printf("[ERROR] %s. {INFO: Use gdb to debbug}\n", message);
+void die(const char *message) {
+  if(errno) {
+      perror(message);
+  } else {
+      printf("ERROR: %s. {INFO: Use gdb to debbug}\n", message);
+  }
+
   exit(1);
 }
-

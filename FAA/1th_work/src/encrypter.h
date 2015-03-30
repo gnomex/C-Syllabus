@@ -7,4 +7,6 @@
 #include "lib_crypt.h"
 #include "buffer.h"
 
+#define VERSION 0.1
+
 #endif /* !ENCRYPTER */

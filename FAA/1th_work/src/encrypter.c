@@ -2,25 +2,36 @@
 
 int main(int argc, char const *argv[])  {
 
-  t_buffer *a = give_me_a_buffer(10);
+  // t_buffer *a = give_me_a_buffer(10);
 
-  assign_data_to_buffer( a, "1234567891");
+  // assign_data_to_buffer( a, "1234567891");
 
-  printf("Data is: %s\n", a->data);
+  // printf("Data is: %s\n", a->data);
 
-  printf("Length of data is: %d \n", strlen(a->data));
-  printf("Associated length is: %d\n", a->current_legth);
-  printf("Allocated buffer size is: %d\n", a->allocated_size);
+  // printf("Length of data is: %d \n", strlen(a->data));
+  // printf("Associated length is: %d\n", a->current_legth);
+  // printf("Allocated buffer size is: %d\n", a->allocated_size);
 
-  reverse_me( a->data );
+  // reverse_me( a->data );
 
-  printf("Reversed is: %s\n", a->data);
+  // printf("Reversed is: %s\n", a->data);
 
-  reverse_buffer_data(a);
+  // reverse_buffer_data(a);
 
-  printf("Rollback: %s\n", a->data);
+  // printf("Rollback: %s\n", a->data);
 
-  free(a);
+  // free(a);
+
+  printf("========================================\n");
+
+  // unsigned short int lol = rotate_left('A', 'z');
+  unsigned char lol = rotate_carry_left_of_char(0xAF, 0xAF);
+
+  printf("LEFT: %c | %u \n", lol, lol );
+
+  unsigned char olo = rotate_carry_rigth_of_char(lol, 0xAF);
+
+  printf("RIGTH: %c | %u \n", olo, olo );
 
   return 0;
 }
