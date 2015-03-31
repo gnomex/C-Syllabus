@@ -8,8 +8,6 @@ unsigned char rotate_carry_left_of_char( const unsigned char ch, const unsigned 
   // unsigned char x = (ch + d); // Auto overflow control
   unsigned short int x = (ch + d); // By-hands overflow control
 
-  printf("PF-DEBUG: %c[%u] + %c[%u] = %u \n",ch, ch, d, d, x );
-
   if ( x > CH_HIGHER ) {
     return CH_LOWER + ( x - CH_HIGHER );
   }
@@ -19,9 +17,7 @@ unsigned char rotate_carry_left_of_char( const unsigned char ch, const unsigned 
 
 unsigned char rotate_carry_rigth_of_char( const unsigned char ch, const unsigned char d )  {
   // unsigned char x = ch - d; // Auto overflow control
-  short int x = (ch - d);
-
-  printf("PF-DEBUG: %c[%u] - %c[%u] = %d \n",ch, ch, d, d, x );
+  short int x = (ch - d); // By-hands overflow control
 
   if ( x < CH_LOWER ) {
     return CH_HIGHER + ( x + CH_LOWER );
@@ -30,48 +26,45 @@ unsigned char rotate_carry_rigth_of_char( const unsigned char ch, const unsigned
   return x;
 }
 
-unsigned char test_lol( int a, int b, f_rotate c) {
-  return 'A';
+size_t find_the_size_of_text_file( FILE *file ) {
+  size_t size = 0;
+
+  fseek(file, 0L, SEEK_END);
+  size = ftell(file);
+  fseek(file, 0L, SEEK_SET);
+
+  return size;
 }
 
-// size_t find_the_size_of_text_file( FILE *file ) {
-//   size_t size = 0;
+void read_the_file( t_buffer *stream, char *filename ) {
+  int streamer_size = stream->current_legth;
+  int approx = 0;
 
-//   fseek(file, 0L, SEEK_END);
-//   size = ftell(file);
-//   fseek(file, 0L, SEEK_SET);
+  FILE *file = NULL;
 
-//   return size;
-// }
+  t_buffer *aux = give_me_a_buffer(streamer_size);
 
-// void read_the_file( size_t *stream, char *filename ) {
-//   int streamer_size = stream->length;
-//   int approx = 0;
+  if ( file = fopen( filename, "r" ) ) {
+    approx = find_the_size_of_text_file( file );
 
-//   FILE *file = NULL;
+    if ( streamer_size > approx ) die("Action: read the input file, message: The stream is bigger than the file");
 
-//   t_buffer *aux = give_me_a_buffer(streamer_size);
+    printf("File lenght is: %d\n", approx);
+    // fread(???)
 
-//   if (file = fopen(filename,"r")){
-//     approx = find_the_size_of_text_file( file );
-
-//     fread(???)
-
-//     while ( !feof(file) ){
+    // while ( !feof(file) ){
 
 
-//       fread(???);
-//     }
+    //   fread(???);
+    fclose(file);
 
-//     fclose(file);
+  } else{
+    // deal_with_errors();
+  }
 
-//   }else{
-//     deal_with_errors();
-//   }
+  free(aux);
 
-//   free(aux);
-
-// }
+}
 // read_from_file -> filename
 //   a buffer
 //   a file
@@ -116,11 +109,11 @@ void reverse_me( char *p )  {
 /**
   Error handler
 */
-void die(const char *message) {
+void die( const char *message ) {
   if(errno) {
       perror(message);
   } else {
-      printf("ERROR: %s. {INFO: Use gdb to debbug}\n", message);
+    printf("[ ERROR ] %s. {INFO: Use gdb to debbug}\n", message);
   }
 
   exit(1);

@@ -9,4 +9,6 @@
 
 #define VERSION 0.1
 
+char *greetings = "Hello there\n Lib_crypt by gnomos\n==========    :)      ==========";
+
 #endif /* !ENCRYPTER */

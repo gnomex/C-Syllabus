@@ -2,29 +2,31 @@
 
 int main(int argc, char const *argv[])  {
 
-  // t_buffer *a = give_me_a_buffer(10);
+  printf("%s\n", greetings);
 
-  // assign_data_to_buffer( a, "1234567891");
+  t_buffer *a = give_me_a_buffer(10);
 
-  // printf("Data is: %s\n", a->data);
+  assign_data_to_buffer( a, "1234567891");
 
-  // printf("Length of data is: %d \n", strlen(a->data));
-  // printf("Associated length is: %d\n", a->current_legth);
-  // printf("Allocated buffer size is: %d\n", a->allocated_size);
+  printf("Data is: %s\n", a->data);
 
-  // reverse_me( a->data );
+  printf("Length of data is: %d \n", strlen(a->data));
+  printf("Associated length is: %d\n", a->current_legth);
+  printf("Allocated buffer size is: %d\n", a->allocated_size);
 
-  // printf("Reversed is: %s\n", a->data);
+  reverse_me( a->data );
 
-  // reverse_buffer_data(a);
+  printf("Reversed is: %s\n", a->data);
 
-  // printf("Rollback: %s\n", a->data);
+  reverse_buffer_data(a);
 
-  // free(a);
+  printf("Rollback: %s\n", a->data);
 
-  printf("========================================\n");
+  read_the_file( a, "lol");
 
-  // unsigned short int lol = rotate_left('A', 'z');
+
+  free(a);
+
   unsigned char lol = rotate_carry_left_of_char(0xAF, 0xAF);
 
   printf("LEFT: %c | %u \n", lol, lol );

@@ -6,6 +6,7 @@
 #include <errno.h>
 #include <string.h>
 #include "buffer.h"
+#include "lib_crypt.h"
 
 #define INFD 0
 #define OUTFD 1
