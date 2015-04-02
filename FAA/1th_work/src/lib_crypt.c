@@ -43,22 +43,22 @@ t_buffer* give_me_a_chunk_from_file( const char *filename,
                                      const size_t meta,
                                      int *c_eof )  {
   FILE *file = NULL;
-  t_buffer *buffer = NULL; buffer = give_me_a_buffer( meta );  // The whole buffer
+  /**
+    The question: What is the best buffer size?
+    Using @param meta - @param current can give us a approximation
+  */
+  t_buffer *buffer = NULL; buffer = give_me_a_buffer( (meta - current) );  // The whole buffer
 
   if ( file = fopen( filename, "r" ) ) {
-    printf("Opened\n");
     fseek( file, current, SEEK_CUR );
-
-    printf("Seeked\n");
 
     char current;
 
     while ( !feof(file) ) {
       current = fgetc(file);  //int fgetc(FILE *stream)
-      // printf("# reader: current[%c,%d]\n", current, current);
 
       if ( current == EOF) {
-        *c_eof = 1;
+        *c_eof = 1; // To be SURE!!!
         break;
       }
 
@@ -68,10 +68,10 @@ t_buffer* give_me_a_chunk_from_file( const char *filename,
     } /* END_WHILE_FEOF_FILE*/
 
     fclose(file);
-
-    return buffer;
   }
   else perror("auheuhaeuhae");
+
+  return buffer;
 }
 
 // void partial_reader_the_file( t_buffer *stream, char *filename ) {

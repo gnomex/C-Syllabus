@@ -37,9 +37,9 @@ int main(int argc, char const *argv[])  {
 
   int my_flag = 0;
 
-  t_buffer *a = give_me_a_chunk_from_file( "lol", 0, 10, &my_flag );
+  t_buffer *a = give_me_a_chunk_from_file( "lol", 0, 1, &my_flag );
 
-  printf("Data is: %s\n", a->data);
+  printf("# Data is: %s\n", a->data);
 
   printf("Length of data is: %d \n", strlen(a->data));
   printf("Associated length is: %d\n", a->current_legth);
@@ -47,9 +47,9 @@ int main(int argc, char const *argv[])  {
 
   printf("The flag: %d\n", my_flag);
 
-  a = give_me_a_chunk_from_file( "lol", 3100, 3500, &my_flag );
+  a = give_me_a_chunk_from_file( "lol", 3100, 3200, &my_flag );
 
-  printf("Data is: %s\n", a->data);
+  printf("\n\n # Data is: %s\n", a->data);
 
   printf("Length of data is: %d \n", strlen(a->data));
   printf("Associated length is: %d\n", a->current_legth);
