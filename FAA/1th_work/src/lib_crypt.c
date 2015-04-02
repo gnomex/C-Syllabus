@@ -28,8 +28,8 @@ void decrypt( char *password, char *salt, t_buffer *destination ) {
 
 unsigned char rotate_carry_left_of_char( const unsigned char ch,
                                          const unsigned char d )  {
-  unsigned char x = (ch + d); // Auto overflow control
-  // unsigned short int x = (ch + d); // By-hands overflow control
+  // unsigned char x = (ch + d); // Auto overflow control
+  unsigned short int x = (ch + d); // By-hands overflow control
 
   if ( x > CH_HIGHER ) {
     return CH_LOWER + ( x - CH_HIGHER );
@@ -40,8 +40,8 @@ unsigned char rotate_carry_left_of_char( const unsigned char ch,
 
 unsigned char rotate_carry_rigth_of_char( const unsigned char ch,
                                           const unsigned char d )  {
-  unsigned char x = ch - d; // Auto overflow control
-  // short int x = (ch - d); // By-hands overflow control
+  // unsigned char x = ch - d; // Auto overflow control
+  unsigned short int x = (ch - d); // By-hands overflow control
 
   if ( x < CH_LOWER ) {
     return CH_HIGHER + ( x + CH_LOWER );

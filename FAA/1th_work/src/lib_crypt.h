@@ -18,9 +18,6 @@ typedef struct {
   char *output_file;
 } f_descriptors;
 
-// typedef void ( *fptr )( void );
-// typedef unsigned char ( *f_rotate )( unsigned char a, unsigned char b );
-
 size_t find_the_size_of_text_file( FILE *file );
 
 void reverse_me( char *p );

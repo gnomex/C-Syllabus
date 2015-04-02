@@ -9,7 +9,7 @@ char* reader( char *message )  {
   char *str = NULL;
   char aux[BUFFER_LIMIT];
 
-  printf("%s:", message);
+  printf("%s: ", message);
   __fpurge(stdin);
   fgets(aux, BUFFER_LIMIT, stdin);
 
@@ -22,36 +22,47 @@ char* reader( char *message )  {
   return str;
 }
 
-int menu(){
-  int option = 0;
+int num_reader()  {
+  int number;
 
+  printf("Choose one: ");
+  __fpurge(stdin); //wait for the prompt to be written on the screen
+  scanf("%d",&number);
+
+  return number;
+}
+
+int menu(){
   system("clear");
+  printf("%s \n", greetings);
   printf("##                              ##\n");
   printf("              MENU                \n");
   printf("1 - Encrypt a file\n");
   printf("2 - Decrypt a file\n");
   printf("0 - Exit\n\n");
-  printf("Choose one: ");
 
-  fflush(stdout); //wait for the prompt to be written on the screen
-  scanf("%d",&option);
-
-  return option;
+  return num_reader();
 }
 
-void get_params( f_descriptors *files, t_buffer *password)  {
+t_buffer* get_passwd()  {
+  char *passwd = NULL;
+  passwd = reader("Type the password");
 
+  t_buffer *password = give_me_a_buffer( strlen(passwd) );
+  assign_data_to_buffer( password, passwd );
+
+  return password;
+}
+
+f_descriptors* get_files( )  {
+  f_descriptors *files = NULL;
   files = give_me_a_f_descriptor( BUFFER_LIMIT );
 
-  assign_fin( files, reader("Type the input file"));
-  assign_fout( files, reader("Type the output file"));
+  assign_fin( files, reader("Type the name of input file"));
+  assign_fout( files, reader("Type the name of output file"));
 
-  char *passwd = reader("Type the password");
-
-  password = give_me_a_buffer( strlen(passwd) );
-  assign_data_to_buffer( password, passwd );
+  return files;
 }
-
 
 int main(int argc, char const *argv[])  {
   f_descriptors *files = NULL;
@@ -59,28 +70,26 @@ int main(int argc, char const *argv[])  {
   int option = 1;
 
   while (option){
-  option = menu();
+    option = menu();
 
     switch(option){
-      case 1:
-        system("clear");
-
-        get_params(files, password);
+      case 1: {
+        files = get_files();
+        password = get_passwd();
         crypt_engine( files, password, ENCRYPT );
 
-        pause();
+        // pause();
         break;
+      }
       case 2: {
-        system("clear");
 
-        get_params(files, password);
+        files = get_files();
+        password = get_passwd();
         crypt_engine( files, password, DECRYPT );
 
-        pause();
+        // pause();
         break;
-        }
-      default:
-      break;
+      }
     }
   }
 
@@ -143,8 +152,7 @@ int main(int argc, char const *argv[])  {
 
   // printf("The flag: %d\n", my_flag);
 
-  // lol();
-  // olo();
+  printf("Bye. See you son\n");
 
   return 0;
 }
