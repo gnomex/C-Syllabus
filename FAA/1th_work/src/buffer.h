@@ -19,6 +19,7 @@ typedef struct {
 
 t_buffer* give_me_a_buffer( size_t size );
 void assign_data_to_buffer( t_buffer *buffer, char *data );
+void append_a_char_to_buffer( t_buffer *buffer, const char ch );
 void reverse_buffer_data( t_buffer *buffer );
 
 #endif /* !BUFFER */

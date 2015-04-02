@@ -39,6 +39,19 @@ void assign_data_to_buffer( t_buffer *buffer, char *data) {
   buffer->current_legth = data_length;
 }
 
+void append_a_char_to_buffer( t_buffer *buffer, const char ch ) {
+  // char *strncat(char *dest, const char *src, size_t n);
+  strncat( buffer->data, ch, 1 );
+
+  size_t n_current = buffer->current_legth + 2;
+
+  if ( n_current != strlen( buffer->data ) )  {
+    die( "Something heapens with the allocated memory, he can't append a char correctly. Run to the hills!!!" )
+  }
+
+  buffer->current_legth = n_current;  //Update the lenght of buffer
+}
+
 void reverse_buffer_data( t_buffer *buffer )  {
   char *p = buffer->data;
   char *q = p;

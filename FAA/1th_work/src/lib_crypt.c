@@ -36,55 +36,78 @@ size_t find_the_size_of_text_file( FILE *file ) {
   return size;
 }
 
-void read_the_file( t_buffer *stream, char *filename ) {
+t_buffer* give_me_a_chunk_from_file( const char *filename,
+                                     const size_t current,
+                                     const size_t meta )  {
+  FILE *file = NULL;
+  t_buffer *aux = give_me_a_buffer(streamer_size);  // The whole buffer
+
+  if ( file = fopen( filename, "r" ) ) {
+    fseek( file, current, SEEK_CUR );
+
+    while ( !feof(file) ) {
+      char current = fgetc(file);
+
+      if ( buffer->current_legth == lenght) {
+        break;
+      } else  {
+        append_a_char_to_buffer( aux, current );
+      }
+    } /* END_FEOF_FILE*/
+
+    fclose(file);
+
+    return aux;
+  }
+
+}
+
+void partial_reader_the_file( t_buffer *stream, char *filename ) {
   int streamer_size = stream->current_legth;
   int approx = 0;
 
-  FILE *file = NULL;
+  FILE *file = NULL; // The given FILE
 
-  t_buffer *aux = give_me_a_buffer(streamer_size);
+  t_buffer *aux = give_me_a_buffer(streamer_size);  // The whole buffer
 
   if ( file = fopen( filename, "r" ) ) {
     approx = find_the_size_of_text_file( file );
 
     if ( streamer_size > approx ) die("Action: read the input file, message: The stream is bigger than the file");
 
-    printf("File lenght is: %d\n", approx);
-    // fread(???)
+    // printf("File lenght is: %d\n", approx); // Low level debug
 
-    // while ( !feof(file) ){
+    while ( !feof(file) ) {
+      if (buffer.is_full) {
+        sync_and_reset( aux );
+      }
+
+      char current = fgetc(file);
+      append_to_buf(current);
+    } /* END_FEOF_FILE*/
 
 
-    //   fread(???);
     fclose(file);
 
-  } else{
+  } else  {
     // deal_with_errors();
   }
 
-  free(aux);
-
+  free(aux); // Tnks buffer for your service
 }
-// read_from_file -> filename
-//   a buffer
-//   a file
-//   approx quantity of chars (sizeof(file) / sizeof(char))
 
-//   while the file not end and current < approx (DEAL with EOF)
+void partial_writer_to_a_file( t_buffer *stream, char *filename )  {
+  FILE *file = NULL;  // The given file
 
-//     append to buffer ( DEAL with buffers sizes)
+  if ( file = fopen( filename, "a" ) ) {
 
-//     // async!!!!!!!
-//     if buffer full
-//         process
-//         crypt
-//         async write
+    fputs( stream->data, file );
 
-//         no errors -> flush buffer
-//         errors -> fuuu
-
-//     done
-// kill -9
+    fclose( file );
+  } else  {
+    // deal_with_errors();
+  }
+}
 
 // crypt -> buffer, salt
 //   magic
