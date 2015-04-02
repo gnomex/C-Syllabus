@@ -123,7 +123,7 @@ void crypt_engine( f_descriptors *files,
   int f_eof = 0;
 
   t_buffer *aux = NULL;
-  t_buffer *crypter = NULL; crypter = give_me_a_buffer( aux->allocated_size );
+  t_buffer *crypter = NULL; crypter = give_me_a_buffer( (meta - f_counter) );
 
   while ( !f_eof )  {
     aux = give_me_a_chunk_from_file( files->input_file , f_counter, meta, &f_eof );
