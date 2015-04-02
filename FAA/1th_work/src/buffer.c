@@ -39,17 +39,17 @@ void assign_data_to_buffer( t_buffer *buffer, char *data) {
   buffer->current_legth = data_length;
 }
 
-void append_a_char_to_buffer( t_buffer *buffer, const char ch ) {
+void append_a_char_to_buffer( t_buffer *buffer, char *ch ) {
   // char *strncat(char *dest, const char *src, size_t n);
   strncat( buffer->data, ch, 1 );
 
-  size_t n_current = buffer->current_legth + 2;
+  // size_t n_current = buffer->current_legth + 2;
+  // printf(" INFO: n_current: %d, lenght: %d \n", n_current, strlen( buffer->data));
+  // if ( n_current <= strlen( buffer->data ) )  {
+  //   die( "Something heapens with the allocated memory, he can't append a char correctly. Run to the hills!!!" );
+  // }
 
-  if ( n_current != strlen( buffer->data ) )  {
-    die( "Something heapens with the allocated memory, he can't append a char correctly. Run to the hills!!!" )
-  }
-
-  buffer->current_legth = n_current;  //Update the lenght of buffer
+  buffer->current_legth = strlen( buffer->data );  //Update the lenght of buffer
 }
 
 void reverse_buffer_data( t_buffer *buffer )  {
