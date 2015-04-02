@@ -110,6 +110,13 @@ void partial_writer_to_a_file( t_buffer *stream, char *filename )  {
   }
 }
 
+int check_files( f_descriptors *files ) {
+  if ( files->input_file == NULL || ( strlen(files->input_file) ==0 ) ) return 0;
+  if ( files->output_file == NULL || ( strlen(files->output_file) ==0 ) ) return 0;
+
+  return 1;
+}
+
 void crypt_engine( f_descriptors *files,
                    t_buffer *password,
                    int option ) {
@@ -120,6 +127,9 @@ void crypt_engine( f_descriptors *files,
   t_buffer *aux = NULL;
   t_buffer *crypter = NULL;
 
+  if ( !check_files ) die("The given files cannot be blank");
+  if ( !check_buffer( password ) ) die("password cannot be empty");
+
   printf("Job in progress # --fin[%s] --fout[%s] --password-size[%d]\n",
     files->input_file,
     files->output_file,
@@ -129,7 +139,11 @@ void crypt_engine( f_descriptors *files,
     aux = give_me_a_chunk_from_file( files->input_file , f_counter, meta, &f_eof );
     crypter = give_me_a_buffer( meta );
 
-    printf("+ info: aux[%d] meta[%d] f_counter[%d] feof[%d]\n", aux->current_legth, meta, f_counter, f_eof);
+    printf("+ info: aux[%d] meta[%d] f_counter[%d] feof[%d]\n",
+            aux->current_legth,
+            meta,
+            f_counter,
+            f_eof);
 
     switch (option) {
       case ENCRYPT:
@@ -143,13 +157,13 @@ void crypt_engine( f_descriptors *files,
     partial_writer_to_a_file( crypter, files->output_file );
     f_counter += meta;
 
-    // printf("++ info: aux[%d] meta[%d] f_counter[%d] feof[%d]\n", aux->current_legth, meta, f_counter, f_eof);
-
     free(aux);
     free(crypter);
   }
-
-  printf("Job done!\n");
+  printf("Job done for # --fin[%s] --fout[%s] --password-size[%d]\n",
+    files->input_file,
+    files->output_file,
+    meta );
 }
 
 /**

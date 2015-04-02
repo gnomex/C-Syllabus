@@ -30,9 +30,21 @@ t_buffer* give_me_a_chunk_from_file( const char *filename,
                                      const size_t meta,
                                      int *c_eof );
 
+void crypt( char *password, char *salt, t_buffer *destination );
+void decrypt( char *password, char *salt, t_buffer *destination );
+
 void crypt_engine( f_descriptors *files,
                    t_buffer *password,
                    int option );
+
+void partial_writer_to_a_file( t_buffer *stream, char *filename );
+
+int check_files( f_descriptors *files );
+
+f_descriptors* give_me_a_f_descriptor( size_t size );
+
+void assign_fin( f_descriptors *src, const char *filename );
+void assign_fout( f_descriptors *src, const char *filename );
 
 void die( const char *message );
 

@@ -22,6 +22,8 @@ void assign_data_to_buffer( t_buffer *buffer, char *data );
 void append_a_char_to_buffer( t_buffer *buffer, char *ch );
 void reverse_buffer_data( t_buffer *buffer );
 
+int check_buffer( t_buffer *buffer );
+
 extern void die( const char *message );
 
 #endif /* !BUFFER */

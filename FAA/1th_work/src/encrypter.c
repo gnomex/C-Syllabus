@@ -32,6 +32,14 @@ int num_reader()  {
   return number;
 }
 
+void wait_a_time()  {
+  int number;
+
+  printf("Type a number and next enter to continue...");
+  __fpurge(stdin); //wait for the prompt to be written on the screen
+  scanf("%d",&number);
+}
+
 int menu(){
   system("clear");
   printf("%s \n", greetings);
@@ -78,7 +86,7 @@ int main(int argc, char const *argv[])  {
         password = get_passwd();
         crypt_engine( files, password, ENCRYPT );
 
-        // pause();
+        wait_a_time();
         break;
       }
       case 2: {
@@ -87,7 +95,7 @@ int main(int argc, char const *argv[])  {
         password = get_passwd();
         crypt_engine( files, password, DECRYPT );
 
-        // pause();
+        wait_a_time();
         break;
       }
     }
