@@ -34,7 +34,7 @@ t_buffer* give_me_a_chunk_from_file( const char *filename,
                                      int *c_eof );
 
 void crypt_engine( f_descriptors *files,
-                   const t_buffer *password,
+                   t_buffer *password,
                    int option );
 
 void die( const char *message );

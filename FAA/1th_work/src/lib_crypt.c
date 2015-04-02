@@ -1,18 +1,35 @@
 #include "lib_crypt.h"
 
-int crypt( char *password, char *salt, t_buffer *destination ) {
-  return 1;
+void crypt( char *password, char *salt, t_buffer *destination ) {
+  int i;
+  int count = strlen( password );
+  char n_ch;
+
+  reverse_me( salt );
+
+  for (i = 0; i < count; i++) {
+    n_ch = rotate_carry_left_of_char( password[i], salt[i] );
+    append_a_char_to_buffer( destination, &n_ch );
+  }
 }
 
-int decrypt( char *password, char *salt, t_buffer *destination ) {
-  return 1;
-}
+void decrypt( char *password, char *salt, t_buffer *destination ) {
+  int i;
+  int count = strlen( password );
+  char n_ch;
 
+  for (i = 0; i < count; i++) {
+    n_ch = rotate_carry_rigth_of_char( password[i], salt[i] );
+    append_a_char_to_buffer( destination, &n_ch );
+  }
+
+  reverse_buffer_data( destination );
+}
 
 unsigned char rotate_carry_left_of_char( const unsigned char ch,
                                          const unsigned char d )  {
-  // unsigned char x = (ch + d); // Auto overflow control
-  unsigned short int x = (ch + d); // By-hands overflow control
+  unsigned char x = (ch + d); // Auto overflow control
+  // unsigned short int x = (ch + d); // By-hands overflow control
 
   if ( x > CH_HIGHER ) {
     return CH_LOWER + ( x - CH_HIGHER );
@@ -23,8 +40,8 @@ unsigned char rotate_carry_left_of_char( const unsigned char ch,
 
 unsigned char rotate_carry_rigth_of_char( const unsigned char ch,
                                           const unsigned char d )  {
-  // unsigned char x = ch - d; // Auto overflow control
-  short int x = (ch - d); // By-hands overflow control
+  unsigned char x = ch - d; // Auto overflow control
+  // short int x = (ch - d); // By-hands overflow control
 
   if ( x < CH_LOWER ) {
     return CH_HIGHER + ( x + CH_LOWER );
@@ -50,9 +67,8 @@ t_buffer* give_me_a_chunk_from_file( const char *filename,
   FILE *file = NULL;
   /**
     The question: What is the best buffer size?
-    Using @param meta - @param current can give us a approximation
   */
-  t_buffer *buffer = NULL; buffer = give_me_a_buffer( (meta - current) );  // The whole buffer
+  t_buffer *buffer = NULL; buffer = give_me_a_buffer( meta );  // The whole buffer
 
   if ( (file = fopen( filename, "r" )) ) {
     fseek( file, current, SEEK_CUR );
@@ -67,10 +83,12 @@ t_buffer* give_me_a_chunk_from_file( const char *filename,
         break;
       }
 
-      if ( buffer->current_legth == meta ) break;
-      else append_a_char_to_buffer( buffer, &current );
+      if ( buffer->current_legth == meta ) {break;}
+      else {append_a_char_to_buffer( buffer, &current );}
 
     } /* END_WHILE_FEOF_FILE*/
+
+    printf(" -- info: chunk[%d]\n", buffer->current_legth );
 
     fclose(file);
   }
@@ -78,29 +96,6 @@ t_buffer* give_me_a_chunk_from_file( const char *filename,
 
   return buffer;
 }
-
-// void partial_reader_the_file( t_buffer *stream, char *filename ) {
-//   int streamer_size = stream->current_legth;
-//   int approx = 0;
-//   FILE *file = NULL; // The given FILE
-//   t_buffer *aux = give_me_a_buffer(streamer_size);  // The whole buffer
-//   if ( file = fopen( filename, "r" ) ) {
-//     approx = find_the_size_of_text_file( file );
-//     if ( streamer_size > approx ) die("Action: read the input file, message: The stream is bigger than the file");
-//     // printf("File lenght is: %d\n", approx); // Low level debug
-//     while ( !feof(file) ) {
-//       if (buffer.is_full) {
-//         sync_and_reset( aux );
-//       }
-//       char current = fgetc(file);
-//       append_to_buf(current);
-//     } /* END_FEOF_FILE*/
-//     fclose(file);
-//   } else  {
-//     // deal_with_errors();
-//   }
-//   free(aux); // Tnks buffer for your service
-// }
 
 void partial_writer_to_a_file( t_buffer *stream, char *filename )  {
   FILE *file = NULL;  // The given file
@@ -116,17 +111,25 @@ void partial_writer_to_a_file( t_buffer *stream, char *filename )  {
 }
 
 void crypt_engine( f_descriptors *files,
-                   const t_buffer *password,
+                   t_buffer *password,
                    int option ) {
-  unsigned int f_counter = 0;
-  unsigned int meta = password->current_legth;
+  size_t f_counter = 0;
+  size_t meta = password->current_legth;
   int f_eof = 0;
 
   t_buffer *aux = NULL;
-  t_buffer *crypter = NULL; crypter = give_me_a_buffer( (meta - f_counter) );
+  t_buffer *crypter = NULL;
+
+  printf("Job in progress # --fin[%s] --fout[%s] --password-size[%d]\n",
+    files->input_file,
+    files->output_file,
+    meta );
 
   while ( !f_eof )  {
     aux = give_me_a_chunk_from_file( files->input_file , f_counter, meta, &f_eof );
+    crypter = give_me_a_buffer( meta );
+
+    printf("+ info: aux[%d] meta[%d] f_counter[%d] feof[%d]\n", aux->current_legth, meta, f_counter, f_eof);
 
     switch (option) {
       case ENCRYPT:
@@ -139,7 +142,14 @@ void crypt_engine( f_descriptors *files,
 
     partial_writer_to_a_file( crypter, files->output_file );
     f_counter += meta;
+
+    // printf("++ info: aux[%d] meta[%d] f_counter[%d] feof[%d]\n", aux->current_legth, meta, f_counter, f_eof);
+
+    free(aux);
+    free(crypter);
   }
+
+  printf("Job done!\n");
 }
 
 /**

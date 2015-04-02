@@ -7,6 +7,8 @@
 #include "lib_crypt.h"
 #include "buffer.h"
 
+#define BUFFER_LIMIT 256
+
 #define VERSION 0.1
 
 char *greetings = "Hello there\n Lib_crypt by gnomos\n==========    :)      ==========";
