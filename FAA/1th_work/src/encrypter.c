@@ -1,23 +1,28 @@
 #include "encrypter.h"
 
 void remove_carriage_return_from_string(char *str)  {
-  char *pos;
-  if ((pos=strchr(str, '\n')) != NULL) *pos = '\0';
+  char *pos = NULL;
+  if ( (pos = strchr( str, '\n' )) != NULL ) *pos = '\0';
 }
 
 char* reader( char *message )  {
   char *str = NULL;
+  char *str_t = NULL;
   char aux[BUFFER_LIMIT];
 
   printf("%s: ", message);
   __fpurge(stdin);
-  fgets(aux, BUFFER_LIMIT, stdin);
+  fgets(aux, BUFFER_LIMIT + 1, stdin);
+
+  // scanf("%255[^\n]%*c");
+  // sscanf( , "%*[^\n] %*c");
 
   remove_carriage_return_from_string(aux);
 
-  str = malloc(sizeof(char) * strlen(aux));
+  size_t str_lenght = strlen(aux);
+  str = malloc(sizeof(char) * str_lenght);
 
-  strcpy(str, aux);
+  strncpy(str, aux, str_lenght);
 
   return str;
 }

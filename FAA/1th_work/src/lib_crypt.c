@@ -1,6 +1,11 @@
 #include "lib_crypt.h"
 
-void crypt( char *password, char *salt, t_buffer *destination ) {
+void
+crypt(
+  char *password,
+  char *salt,
+  t_buffer *destination )
+{
   int i;
   int count = strlen( password );
   char n_ch;
@@ -8,47 +13,71 @@ void crypt( char *password, char *salt, t_buffer *destination ) {
   reverse_me( salt );
 
   for (i = 0; i < count; i++) {
-    n_ch = rotate_carry_left_of_char( password[i], salt[i] );
+    // n_ch = sum_char( password[i], salt[i] );
+    n_ch = (char)( salt[i] + password[i] );
     append_a_char_to_buffer( destination, &n_ch );
   }
 }
 
-void decrypt( char *password, char *salt, t_buffer *destination ) {
+void
+decrypt(
+  char *password,
+  char *salt,
+  t_buffer *destination )
+{
   int i;
   int count = strlen( password );
   char n_ch;
 
   for (i = 0; i < count; i++) {
-    n_ch = rotate_carry_rigth_of_char( password[i], salt[i] );
+    // n_ch = dec_char( password[i], salt[i] );
+    n_ch = (char)( salt[i] - password[i] );
     append_a_char_to_buffer( destination, &n_ch );
   }
 
   reverse_buffer_data( destination );
 }
 
-unsigned char rotate_carry_left_of_char( const unsigned char ch,
-                                         const unsigned char d )  {
-  // unsigned char x = (ch + d); // Auto overflow control
-  unsigned short int x = (ch + d); // By-hands overflow control
+// unsigned char rotate_carry_left_of_char( const unsigned char ch,
+//                                          const unsigned char d )  {
+//   // unsigned char x = (ch + d); // Auto overflow control
+//   unsigned short int x = (ch + d); // By-hands overflow control
 
-  if ( x > CH_HIGHER ) {
-    return CH_LOWER + ( x - CH_HIGHER );
-  }
+//   if ( x > CH_HIGHER ) {
+//     return CH_LOWER + ( x - CH_HIGHER );
+//   }
 
-  return x;
-}
+//   return x;
+// }
 
-unsigned char rotate_carry_rigth_of_char( const unsigned char ch,
-                                          const unsigned char d )  {
-  // unsigned char x = ch - d; // Auto overflow control
-  unsigned short int x = (ch - d); // By-hands overflow control
+// unsigned char rotate_carry_rigth_of_char( const unsigned char ch,
+//                                           const unsigned char d )  {
+//   // unsigned char x = ch - d; // Auto overflow control
+//   unsigned short int x = (ch - d); // By-hands overflow control
 
-  if ( x < CH_LOWER ) {
-    return CH_HIGHER + ( x + CH_LOWER );
-  }
+//   if ( x < CH_LOWER ) {
+//     return CH_HIGHER + ( x + CH_LOWER );
+//   }
 
-  return x;
-}
+//   return x;
+// }
+
+// char
+// sum_char(
+//   const char ch,
+//   const char d )
+// {
+//   return ch + d;
+// }
+
+// char
+// dec_char(
+//   const char ch,
+//   const char d )
+// {
+//   return ch - d;
+// }
+
 
 size_t find_the_size_of_text_file( FILE *file ) {
   size_t size = 0;
@@ -125,7 +154,7 @@ void crypt_engine( f_descriptors *files,
   int f_eof = 0;
 
   t_buffer *aux = NULL;
-  t_buffer *crypter = NULL;
+  t_buffer *encrypted_b = NULL;
 
   if ( !check_files ) die("The given files cannot be blank");
   if ( !check_buffer( password ) ) die("password cannot be empty");
@@ -137,9 +166,9 @@ void crypt_engine( f_descriptors *files,
 
   while ( !f_eof )  {
     aux = give_me_a_chunk_from_file( files->input_file , f_counter, meta, &f_eof );
-    crypter = give_me_a_buffer( meta );
+    encrypted_b = give_me_a_buffer( meta );
 
-    printf("+ info: aux[%d] meta[%d] f_counter[%d] feof[%d]\n",
+    printf("+ info: aux[%d] meta[%d] readed-block[%d] feof[%d]\n",
             aux->current_legth,
             meta,
             f_counter,
@@ -147,18 +176,18 @@ void crypt_engine( f_descriptors *files,
 
     switch (option) {
       case ENCRYPT:
-        crypt( password->data, aux->data, crypter);
+        crypt( password->data, aux->data, encrypted_b );
         break;
       case DECRYPT:
-        decrypt( password->data, aux->data, crypter);
+        decrypt( password->data, aux->data, encrypted_b );
         break;
     }
 
-    partial_writer_to_a_file( crypter, files->output_file );
+    partial_writer_to_a_file( encrypted_b, files->output_file );
     f_counter += meta;
 
     free(aux);
-    free(crypter);
+    free(encrypted_b);
   }
   printf("Job done for # --fin[%s] --fout[%s] --password-size[%d]\n",
     files->input_file,

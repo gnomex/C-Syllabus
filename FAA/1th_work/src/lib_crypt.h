@@ -22,8 +22,8 @@ size_t find_the_size_of_text_file( FILE *file );
 
 void reverse_me( char *p );
 
-unsigned char rotate_carry_left_of_char( const unsigned char ch, const unsigned char d );
-unsigned char rotate_carry_rigth_of_char( const unsigned char ch, const unsigned char d );
+// unsigned char rotate_carry_left_of_char( const unsigned char ch, const unsigned char d );
+// unsigned char rotate_carry_rigth_of_char( const unsigned char ch, const unsigned char d );
 
 t_buffer* give_me_a_chunk_from_file( const char *filename,
                                      const size_t current,

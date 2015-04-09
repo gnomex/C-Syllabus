@@ -9,7 +9,7 @@
 
 #define BUFFER_LIMIT 256
 
-#define VERSION 0.1
+#define VERSION 0.2
 
 char *greetings = "Hello there\n Lib_crypt by gnomos\n==========    :)      ==========";
 
