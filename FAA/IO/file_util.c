@@ -89,8 +89,11 @@ find_the_size_of_a_regularfile( char *filename )
   }
 
   if ( (fstat(fd, &stbuf) != 0) || ( !S_ISREG(stbuf.st_mode) ) ) { /* Handle error */ }
+
   return stbuf.st_size;
 }
+
+
 
 void
 assign_column_pk_to_table(
@@ -101,7 +104,7 @@ assign_column_pk_to_table(
 }
 
 int
-write_table_to_file(
+write_table_to_text_file(
   char *filename,
   table_t *table,
   int FILETYPE )
@@ -114,15 +117,7 @@ write_table_to_file(
 
     assign_column_pk_to_table( table, id );
 
-    switch (FILETYPE) {
-      case TEXT_FILE:
-        fputs( table->column, file );
-        break;
-
-      case BINARY_FILE:
-        fwrite( table, sizeof(table_t), 1, file );
-        break;
-    }
+    fputs( table->column, file );
 
     fclose(file);
   } /* END_WHILE_FEOF_FILE*/
@@ -133,6 +128,33 @@ write_table_to_file(
 
   return 1;
 }
+
+int
+write_table_to_bin_file(
+  char *filename,
+  table_t *table,
+  int FILETYPE )
+{
+  FILE *file = NULL;
+
+  off_t id = find_the_size_of_a_regularfile( filename );
+
+  if ( (file = fopen( filename, "a" )) ) {
+
+    assign_column_pk_to_table( table, id );
+
+    fwrite( table, sizeof(table_t), 1, file );
+
+    fclose(file);
+  } /* END_WHILE_FEOF_FILE*/
+  else {
+    perror("auheuhaeuhae");
+    return 0;
+  }
+
+  return 1;
+}
+
 
 /**
   int fseek(FILE *stream, long int offset, int whence)
