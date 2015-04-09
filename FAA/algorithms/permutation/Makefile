@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS = -g -Wall -fstack-protector -o
+CFLAGS = -g -O3 -Wall -fstack-protector-all -o
 
 1:
 	$(CC) $(CFLAGS) permutation permute_a_srting.c

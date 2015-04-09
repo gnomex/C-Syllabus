@@ -1,12 +1,19 @@
 CC=gcc
-CFLAGS = -g -Wall -fstack-protector -o
+CFLAGS = -g -O3 -Wall -fstack-protector-all -ggdb -o
 
 first: *.c
-  $(CC) $(CFLAGS)
+	$(CC) $(CFLAGS)
 
 with_lib: *.c
-  $(CC) $(CFLAGS)  -lm
+	$(CC) $(CFLAGS)  -lm
 
-all: first
+time: time.c
+	$(CC) $< $(CFLAGS) time
+
+files: file_util.c
+	$(CC) $< $(CFLAGS) file_util
+
+# all: first
 
 clean:
+	rm -rf time file_util

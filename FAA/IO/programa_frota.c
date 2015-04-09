@@ -40,8 +40,8 @@ Veja tambem a funcao limpa_buffer(), pois ela tem opcao para a limpeza de buffer
 #define CARROS_DAT "mycars.dat"
 
 // Descomentar o bloco abaixo para Linux/Mac
-// #define CLEAR "clear"
-// #define PAUSE "read a"
+#define CLEAR "clear"
+#define PAUSE "read a"
 
 // Descomentar o bloco abaixo para Windows
 //#define CLEAR "cls"

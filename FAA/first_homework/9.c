@@ -19,7 +19,7 @@ void do_nothing(double value)  {
   }
 
   if (value > 0.001)  {
-    printf("\nOw no, missed %.2f cents... Accept a lollipop?\n\n", value);
+    printf("\nOw no, missed %.2f cents... Do you accept a lollipop?\n\n", value);
   }
 }
 
