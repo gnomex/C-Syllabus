@@ -157,14 +157,14 @@ write_table_to_bin_file(
 
 
 /**
+  From: http://www.tutorialspoint.com/cprogramming/c_file_io.htm
+
   int fseek(FILE *stream, long int offset, int whence)
 
   SEEK_SET  Beginning of file
   SEEK_CUR  Current position of the file pointer
   SEEK_END  End of file
-*/
 
-/**
   FILE *fopen( const char * filename, const char * mode );
 
   r Opens an existing text file for reading purpose.
@@ -175,7 +175,19 @@ write_table_to_bin_file(
   a+  Opens a text file for reading and writing both. It creates the file if it does not exist. The reading will start from the beginning but writing can only be appended.
 
   "rb", "wb", "ab", "rb+", "r+b", "wb+", "w+b", "ab+", "a+b"
+
+int fputc( int c, FILE *fp );
+int fgetc( FILE * fp );
+int fputs( const char *s, FILE *fp );
+char *fgets( char *buf, int n, FILE *fp );
+
+size_t fread(void *ptr, size_t size_of_elements,
+             size_t number_of_elements, FILE *a_file);
+size_t fwrite(const void *ptr, size_t size_of_elements,
+             size_t number_of_elements, FILE *a_file);
+
 */
+
 
 
 /**

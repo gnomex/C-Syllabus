@@ -19,6 +19,12 @@ typedef struct {
   int column_allocated_size;
 } table_t;
 
+typedef struct t_node
+{
+  table_t content;
+  struct t_node *next;
+} table_node;
+
 void die( const char *message );
 
 #endif
