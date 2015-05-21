@@ -27,7 +27,8 @@ list_new() {
 
 list_t *
 list_new_with_limit(int size) {
-  list_t *self = list_new();
+  list_t *self = NULL;
+  self = list_new();
   self->max_size = size;
 
   return self;

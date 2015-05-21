@@ -13,6 +13,12 @@ typedef struct {
   int miss;
 } stats_t;
 
+typedef struct {
+  // char *name;
+  int data;
+} buffer_cmp;
+
+
 
 
 #endif /* END_OF_LRU */
