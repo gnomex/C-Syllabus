@@ -85,13 +85,58 @@ show_stats(stats_t *stats)  {
   printf("# Hits:%d\n# Miss: %d \n -> %d shots\n", stats->hits, stats->miss, stats->shots);
 }
 
+lru_engine(
+    list_node_t *content,
+    list_t  *buffer,
+    list_t  *list,
+    stats_t *stats
+  )
+{
+  list_node_t *element = list_find(buffer, content->val);
+  // int exists = include(buffer, content);
+
+  ++stats->shots;
+
+  if ( element != NULL ) {
+
+    ++stats->hits;
+
+    list_remove(buffer, element);
+    list_rpush(buffer, content);
+
+  } else {
+    ++stats->miss;
+
+    list_node_t *another = list_find(list, content->val);
+
+    if (another != NULL)  {
+
+      if ( buffer->len >= buffer->max_size ){
+        list_lpop(buffer);
+      }
+
+      list_rpush(buffer, content);
+
+    } else  {
+      printf("Adding new symbol to ascii list [%s]\n", content->val );
+      list_rpush(list, list_node_new( content->val ));
+    }
+  }
+}
+
 void
-engine_yard(const char *phrase, list_t *list, stats_t *stats) {
+engine_yard(const char *phrase, list_t *buffer, list_t *list, stats_t *stats) {
   int i = 0;
   const int size = strlen(phrase);
   for (; i < size; ++i)  {
     unsigned int ch = phrase[i];
-    add_to_buffer(list, list_node_new( ch ), stats);
+    // add_to_buffer(list, list_node_new( ch ), stats);
+    lru_engine(
+        list_node_new( ch ),
+        buffer,
+        list,
+        stats
+      );
   }
 }
 
@@ -134,9 +179,9 @@ main(int argc, char const *argv[])
         engine_yard(
             reader( "Hey Dude, type a phrase: " ),
             buffer,
+            list,
             buffer_stats
           );
-
         show_stats(buffer_stats);
 
         wait_a_time();
@@ -144,7 +189,8 @@ main(int argc, char const *argv[])
       }
       case 2:
       {
-        printf("buffer [now] len: %d, buffer size: %d \n", buffer->len, buffer->max_size);
+        printf("Allowed ASCII List - len: %d, list size: %d \n", list->len, list->max_size);
+        printf("Buffer [now] len: %d, buffer size: %d \n", buffer->len, buffer->max_size);
         show_list(buffer);
         wait_a_time();
         break;
