@@ -150,7 +150,7 @@ list_find(list_t *self, void *val) {
   list_node_t *node;
 
   while ((node = list_iterator_next(it))) {
-    if (self->match) {
+    if (self->match != NULL) {
       if (self->match(val, node->val)) {
         list_iterator_destroy(it);
         return node;
