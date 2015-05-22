@@ -206,6 +206,20 @@ main(int argc, char const *argv[])
       }
       case 3:
       {
+        printf("Please, tell me what is a good buffer size? ");
+        int new_size = num_reader();
+
+        if ( (new_size < 1) && (new_size >= list->len) ) {
+          printf("Hey, the size MUST be GREATER than 0 and LESS than %d. Try again: ", list->len);
+          new_size = num_reader();
+        }
+
+        list_destroy(buffer);
+
+        buffer  = list_new_with_limit(new_size);
+
+        printf("\n\nRESIZED!!! Buffer is now len: %d, buffer size: %d \n\n", buffer->len, buffer->max_size);
+
         break;
       }
     }
