@@ -81,7 +81,8 @@ populate_buffer(list_t *list, stats_t *stats){
 }
 
 void
-show_stats(stats_t *stats)  {
+show_stats(const char *message, stats_t *stats)  {
+  printf("{%s}\n", message);
   printf("# Hits:%d\n# Miss: %d \n -> %d shots\n", stats->hits, stats->miss, stats->shots);
 }
 
@@ -89,23 +90,27 @@ lru_engine(
     list_node_t *content,
     list_t  *buffer,
     list_t  *list,
-    stats_t *stats
+    stats_t *stats,
+    stats_t *current_status
   )
 {
   list_node_t *element = list_find(buffer, content->val);
   // int exists = include(buffer, content);
 
   ++stats->shots;
+  ++current_status->shots;
 
   if ( element != NULL ) {
 
     ++stats->hits;
+    ++current_status->hits;
 
     list_remove(buffer, element);
     list_rpush(buffer, content);
 
   } else {
     ++stats->miss;
+    ++current_status->miss;
 
     list_node_t *another = list_find(list, content->val);
 
@@ -126,6 +131,8 @@ lru_engine(
 
 void
 engine_yard(const char *phrase, list_t *buffer, list_t *list, stats_t *stats) {
+  stats_t *current_status = NULL; current_status = (stats_t *) malloc (sizeof (stats_t));
+
   int i = 0;
   const int size = strlen(phrase);
   for (; i < size; ++i)  {
@@ -135,9 +142,11 @@ engine_yard(const char *phrase, list_t *buffer, list_t *list, stats_t *stats) {
         list_node_new( ch ),
         buffer,
         list,
-        stats
+        stats,
+        current_status
       );
   }
+  show_stats( "Current phrase", current_status);
 }
 
 
@@ -182,7 +191,7 @@ main(int argc, char const *argv[])
             list,
             buffer_stats
           );
-        show_stats(buffer_stats);
+        show_stats( "General buffer", buffer_stats);
 
         wait_a_time();
         break;
