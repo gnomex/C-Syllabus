@@ -34,10 +34,3 @@ clean:
 remove: clean
 	@$(rm) $(BINDIR)/$(TARGET)
 	@echo "Executable removed!"
-
-
-# all: ${OBJ}
-# 	${CC} ${CFLAGS} ${OBJ} -o ${TARGET}
-
-# encrypt.o: encrypt.c encrypt.h
-# 	${CC} ${CFLAGS} -c $@
