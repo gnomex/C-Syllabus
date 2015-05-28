@@ -86,6 +86,7 @@ show_stats(const char *message, stats_t *stats)  {
   printf("# Hits:%d\n# Miss: %d \n -> %d shots\n", stats->hits, stats->miss, stats->shots);
 }
 
+void
 lru_engine(
     list_node_t *content,
     list_t  *buffer,
