@@ -1,5 +1,10 @@
 #include "list.h"
 
+static int
+node_match(node_t *a, node_t *b)  {
+  return strncmp(a->data, b->data, STRING_MAX);
+}
+
 head_t*
 list_new() {
   head_t *self = NULL;
@@ -7,7 +12,7 @@ list_new() {
     return NULL;
   self->head = NULL;
   self->tail = NULL;
-  self->match = NULL;
+  self->match = node_match;
   self->length = 0;
   return self;
 }
@@ -40,6 +45,7 @@ list_rpush(head_t *list, node_t *node)  {
   } else {
     list->head = list->tail = node;
   }
+  ++list->length;
 }
 
 /*
@@ -75,6 +81,7 @@ list_lpush(head_t *list, node_t *node)  {
   } else {
     list->head = list->tail = node;
   }
+  ++list->length;
 }
 
 /*
@@ -94,4 +101,69 @@ list_lpop(head_t *list)  {
 
   node->next = node->prev = NULL;
   return node;
+}
+
+
+void
+list_insert_at(head_t *list, node_t *node, const int index)  {
+  if ( !node ) return NULL;
+  if ( index > list->length ) return NULL;
+
+  // First
+  if ( !index ){
+    list_lpush(list, node);
+    return;
+  }
+  // Last
+  if( index == list->length )  {
+    list_rpush(list, node);
+    return;
+  }
+  //Middle
+  node_t *iterator = list->head;
+  int idx = 0;
+
+  while ( idx < index )  {
+    iterator = iterator->next;
+    ++idx;
+  }
+
+  node->next = iterator->next;
+  node->prev = iterator;
+  iterator->next = iterator->next->prev = node;
+  ++list->length;
+}
+
+void
+list_ordened_push(head_t *list, node_t *node)  {
+  if (!node) return NULL;
+
+  node_t *iterator = list->head;
+  int index = 0;
+
+  while ( index <= list->length ) {
+    if( list->match(iterator, node) ){
+      break;
+    }
+
+    iterator = iterator->next;
+    ++index;
+  }
+
+  list_insert_at(list, node, index);
+}
+
+node_t*
+list_find(head_t *list, const char *value)  {
+  node_t *iterator = list->head;
+  node_t *compare_to; compare_to = list_node_new();
+  assign_data_to_node(compare_to, value);
+
+  while ( iterator ) {
+    if( list->match(iterator, compare_to) ){
+      return iterator;
+    }
+    iterator = iterator->next;
+  }
+  return NULL;
 }
