@@ -167,3 +167,30 @@ list_find(head_t *list, const char *value)  {
   }
   return NULL;
 }
+
+node_t*
+list_at(head_t *list, const int index)  {
+  node_t *iterator = list->head;
+  int idx = 0;
+
+  while ( idx <= index ) {
+    iterator = iterator->next;
+    ++idx;
+  }
+
+  return iterator;
+}
+
+void
+list_remove(head_t *list, node_t *node) {
+  node->prev
+    ? (node->prev->next = node->next)
+    : (list->head = node->next);
+
+  node->next
+    ? (node->next->prev = node->prev)
+    : (list->tail = node->prev);
+
+  free(node);
+  --list->length;
+}
