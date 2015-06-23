@@ -1,19 +1,30 @@
 #include "list.h"
 
-void list_destroy(airports *self) {
+void
+destroy_airports_list(airports *self) {
   unsigned int length = self->length;
-  flight *current = self->head;
-  flight *next;
+
+  airport *current = self->head;
+  airport *next    = NULL;
+
+  flights *current_list = current->fligths_list;
+
   while(length--) {
     next = current->next;
-    if(self->free) {
-      self->free(current->value);
-    }
+
+    destroy_fligth_list(current->flights_list);
+    free(current->airport_name);
     free(current);
     current = next;
   }
   free(self);
 }
+
+void
+destroy_fligth_list(flights *self)  {
+
+}
+
 
 flight *list_rpush(airports *self, flight *node) {
   if(!node) return NULL;
