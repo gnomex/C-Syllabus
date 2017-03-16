@@ -4,7 +4,10 @@ CFLAGS=-g -std=c99 -Wall -Wextra -O3 -fstack-protector -fstack-usage -ggdb -o
 1: static_array.c
 	$(CC) $< $(CFLAGS) static_array
 
-all: 1
+2: binary_search.c
+	$(CC) $< $(CFLAGS) binary_search
+
+all: 1 2
 
 clean:
-	rm -rf static_array *.su
+	rm -rf static_array binary_search *.su
