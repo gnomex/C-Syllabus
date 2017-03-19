@@ -25,7 +25,7 @@ int append_and_sort(int *array, int *tam, int element) {
 int insertion_sort_from_tail(int *array, int *tam, int element) {
   int i;
 
-  if (*tam >= ARRAY_LENGTH - 1) return -1; // ensure enought space
+  if (*tam >= ARRAY_LENGTH - 1) return -1; // ensure enough space
 
   for( i = *tam; i && (element < array[i - 1]); i--) array[i] = array[i - 1];
 
@@ -42,7 +42,7 @@ int insertion_sort_from_tail(int *array, int *tam, int element) {
 void insertion_sort_from_front(int *array, int *tam, int element) {
   int i, j;
 
-  if (*tam >= ARRAY_LENGTH - 1) return -1; // ensure enought space
+  if (*tam >= ARRAY_LENGTH - 1) return -1; // ensure enough space
 
   // find the insertion position
   for (i = 0; array[i] < element && i < *tam; i++);
