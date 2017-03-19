@@ -1,0 +1,8 @@
+insertion_sort.c:11:5:append_and_sort	8	static
+insertion_sort.c:25:5:insertion_sort_from_tail	8	static
+insertion_sort.c:42:6:insertion_sort_from_front	8	static
+insertion_sort.c:63:5:remove_element	8	static
+insertion_sort.c:80:6:insertion_sort_full_array	8	static
+insertion_sort.c:96:6:insertion_sort_partial_array	8	static
+insertion_sort.c:114:6:printArray	32	static
+insertion_sort.c:126:5:main	192	static
