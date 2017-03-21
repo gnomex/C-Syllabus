@@ -40,6 +40,7 @@ int main() {
   TM_PRINTF("[search] Looking for 11, returned: %d\n", binary_search(array,0, tam,  11));
   TM_PRINTF("[search] Looking for 1, returned: %d\n", binary_search(array,0, tam,  1));
   TM_PRINTF("[search] Looking for 10, returned: %d\n", binary_search(array,0, tam,  10));
+  TM_PRINTF("[search] Looking for 9, returned: %d\n", binary_search(array,0, tam,  9));
 
   return 0;
 }
