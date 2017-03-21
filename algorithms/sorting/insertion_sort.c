@@ -27,6 +27,12 @@ int insertion_sort_from_tail(int *array, int *tam, int element) {
 
   if (*tam >= ARRAY_LENGTH - 1) return -1; // ensure enough space
 
+  // empty array
+  if (*tam == 0) {
+    array[(*tam)++] = element;
+    return 1;
+  }
+
   for( i = *tam; i && (element < array[i - 1]); i--) array[i] = array[i - 1];
 
   array[i] = element;
@@ -43,6 +49,12 @@ void insertion_sort_from_front(int *array, int *tam, int element) {
   int i, j;
 
   if (*tam >= ARRAY_LENGTH - 1) return -1; // ensure enough space
+
+  // empty array
+  if (*tam == 0) {
+    array[(*tam)++] = element;
+    return 1;
+  }
 
   // find the insertion position
   for (i = 0; array[i] < element && i < *tam; i++);
