@@ -10,9 +10,11 @@ CFLAGS=-g -std=c99 -Wall -Wextra -O3 -fstack-protector -fstack-usage -ggdb -o
 3: colorful.c
 	$(CC) $< $(CFLAGS) colorful.run
 
-
 4: factorial.c
 	$(CC) $< $(CFLAGS) factorial.run
+
+6: fibonacci.c
+	$(CC) $< $(CFLAGS) fibonacci.run
 
 all: 1 2
 
