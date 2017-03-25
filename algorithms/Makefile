@@ -16,6 +16,12 @@ CFLAGS=-g -std=c99 -Wall -Wextra -O3 -fstack-protector -fstack-usage -ggdb -o
 6: fibonacci.c
 	$(CC) $< $(CFLAGS) fibonacci.run
 
+7: our_malloc.c
+	$(CC) $< $(CFLAGS) our_malloc.run
+
+9: balanced_parentheses.c
+	$(CC) $< $(CFLAGS) balanced_parentheses.run
+
 all: 1 2
 
 clean:
