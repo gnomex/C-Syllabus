@@ -16,6 +16,10 @@ selection: selection_sort.c
 insertion: insertion_sort.c
 	$(CC) $< $(CFLAGS) insertion_sort.run
 
+quick: quick_sort.c
+	$(CC) $< $(CFLAGS) quick_sort.run
+
+
 all:
 
 clean:
