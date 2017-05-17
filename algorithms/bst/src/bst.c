@@ -54,9 +54,37 @@ void traverse(t_no *no) {
   traverse(no->right);
 }
 
+t_no* find_minimum(t_no* no) {
+  if (!no->left)
+    return no;
+
+  return find_minimum(no->left);
+}
+
+t_no* find_maximum(t_no* no) {
+  if (!no->right)
+    return no;
+
+  return find_maximum(no->right);
+}
+
+
 // int SEARCH() {}
-// int MINIMUM() {}
-// int MAXIMUM() {}
+t_no* minimum(t_tree* tree) {
+
+  if (!tree->root)
+    return NULL;
+
+  return find_minimum(tree->root);
+}
+
+t_no* maximum(t_tree* tree) {
+  if (!tree->root)
+    return NULL;
+
+  return find_maximum(tree->root);
+}
+
 // int PREDECESSOR() {}
 // int SUCCESSOR() {}
 // int DELETE() {}
@@ -118,16 +146,56 @@ void insert_iterative(t_tree *tree, t_no *no) {
 // void inorderTreeWalk(){}
 // void preorderTreeWalk(){}
 // void postorderTreeWalk(){}
-
-// void* find(BNode* x, int k) {
-//   if (x || x.key == k ) return x;
-
-//   return k < x.key ? find(x->left, k) : find(x->right, k);
-// }
-
 // void buildCompleteBSTFromArray(){}
 // void buildCompleteBSTFromAnotherMessyBST(){}
 
+t_no* search_r(t_no* no, int v) {
+  if (!no)
+    return NULL;
+
+  if ( no->value == v )
+    return no;
+
+  return v > no->value ? search_r(no->right, v) : search_r(no->left, v);
+}
+
+t_no* search_itarative(t_no* no, int v) {
+
+  while (no && no->value != v) {
+    no = v > no->value ? no->right : no->left;
+  }
+
+  return no;
+}
+
+t_no* search(t_tree* tree, int v) {
+  if (!tree->root)
+    return NULL;
+
+  return search_r(tree->root, v);
+}
+
+void find_and_search_r(t_tree* tree, int v) {
+  t_no *lol = search(tree, v);
+
+  printf("[R] Looking for: %d\n", v);
+
+  if (lol)
+    printf("%d\n", lol->value);
+  else
+    printf("NULL\n");
+}
+
+void find_and_search_iterative(t_tree* tree, int v) {
+  t_no *lol = search_itarative(tree->root, v);
+
+  printf("[I] Looking for: %d\n", v);
+
+  if (lol)
+    printf("%d\n", lol->value);
+  else
+    printf("NULL\n");
+}
 
 int main(int argc, char const *argv[]) {
   t_tree *tree = initialize_tree();
@@ -140,6 +208,27 @@ int main(int argc, char const *argv[]) {
   insert_iterative(tree, alloc_new_node(100));
 
   traverse(tree->root);
+
+  find_and_search_r(tree, 1);
+  find_and_search_r(tree, 10);
+  find_and_search_r(tree, 23);
+  find_and_search_r(tree, 2);
+  find_and_search_r(tree, 9);
+  find_and_search_r(tree, 99);
+
+  find_and_search_iterative(tree, 1);
+  find_and_search_iterative(tree, 10);
+  find_and_search_iterative(tree, 23);
+  find_and_search_iterative(tree, 2);
+  find_and_search_iterative(tree, 9);
+  find_and_search_iterative(tree, 99);
+
+  t_no *min = NULL, *max = NULL;
+  min = minimum(tree);
+  max = maximum(tree);
+
+  printf("Min: %d\n", min->value);
+  printf("Max: %d\n", max->value);
 
   return 0;
 }
