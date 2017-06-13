@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define LOG(f_, ...) printf((f_), __VA_ARGS__)
+
 typedef struct {
   int nlinhas;
   int ncolunas;
@@ -22,8 +24,9 @@ typedef struct {
 void reset_colours_histogram(tcor *cores) {
   int i;
 
-  for (i = 0; i < cores->quantidade; i++ )
+  for (i = 0; i < cores->quantidade; i++ ){
     cores->cores[i] = 0;
+  }
 }
 
 void initialize_game_play(tplayed *plays) {
@@ -44,8 +47,11 @@ void inicializa_cores(tcor *cores) {
 void imprime_cores(tcor *cores) {
   int i;
 
-  for (i = 0; i < cores->quantidade; i++ )
-    printf("%d ", cores->cores[i] );
+  for (i = 0; i < cores->quantidade; i++ ) {
+    printf("[%d] %d, ", i, cores->cores[i] );
+  }
+
+  printf("\n");
 }
 
 void gera_mapa(tmapa *m, int semente) {
@@ -62,7 +68,7 @@ void gera_mapa(tmapa *m, int semente) {
     m->mapa[i] = (int*) malloc(m->ncolunas * sizeof(int));
 
     for(j = 0; j < m->ncolunas; j++)
-      m->mapa[i][j] = 1 + rand() % m->ncores;
+      m->mapa[i][j] = 0 + rand() % m->ncores;
   }
 }
 
@@ -83,7 +89,7 @@ void carrega_mapa(tmapa *m) {
 void mostra_mapa(tmapa *m) {
   int i, j;
 
-  printf("%d %d %d\n", m->nlinhas, m->ncolunas, m->ncores);
+  // printf("%d %d %d\n", m->nlinhas, m->ncolunas, m->ncores);
 
   for(i = 0; i < m->nlinhas; i++) {
     for(j = 0; j < m->ncolunas; j++)
@@ -110,22 +116,23 @@ void mostra_mapa_cor(tmapa *m) {
     return;
   }
 
-  printf("%d %d %d\n", m->nlinhas, m->ncolunas, m->ncores);
+  // printf("%d %d %d\n", m->nlinhas, m->ncolunas, m->ncores);
 
-  for(i = 0; i < m->nlinhas; i++) {
-    for(j = 0; j < m->ncolunas; j++)
-      if(m->ncores > 10)
-        printf("%s%02d%s ", cor_ansi[m->mapa[i][j]], m->mapa[i][j], cor_ansi[0]);
-      else
-        printf("%s%d%s ", cor_ansi[m->mapa[i][j]], m->mapa[i][j], cor_ansi[0]);
-
-    printf("\n");
-  }
+    for(i = 0; i < m->nlinhas; i++) {
+      for(j = 0; j < m->ncolunas; j++)
+        if(m->ncores > 10)
+    printf("%s%02d%s ", cor_ansi[m->mapa[i][j]], m->mapa[i][j], cor_ansi[0]);
+        else
+    printf("%s%d%s ", cor_ansi[m->mapa[i][j]], m->mapa[i][j], cor_ansi[0]);
+      printf("\n");
+    }
 }
 
 void update_stats_for(int cor, tcor *stats) {
+  LOG("inc cor[%d]\n", cor);
+
   if (cor >= 0 && cor < stats->quantidade)
-    ++(stats->cores[cor]); // todo: it's right?
+    stats->cores[cor] += 1; // todo: it's right?
 }
 
 /*
@@ -136,20 +143,28 @@ primeiros 30% -> busca apenas nas bordas
 */
 void procura_vizinhos(tmapa *m, tcor *s, int l, int c, int fundo) {
 
-  if (m->mapa[l][c] != fundo)
+  LOG("processando cor [%d, %d] %d\n", l, c, m->mapa[l][c]);
+
+  if (!(l == 0 && c == 0) && m->mapa[l][c] != fundo) {
     update_stats_for(m->mapa[l][c], s);
+    return;
+  }
 
-  if(l < m->nlinhas - 1 && m->mapa[l+1][c] == fundo)
-    procura_vizinhos(m, s, l+1, c, fundo);
-
-  if(c < m->ncolunas - 1 && m->mapa[l][c+1] == fundo)
+  // right
+  if(c < m->ncolunas - 1 /*&& m->mapa[l][c+1] == fundo*/)
     procura_vizinhos(m, s, l, c+1, fundo);
 
-  if(l > 0 && m->mapa[l-1][c] == fundo)
+  // down
+  if(l < m->nlinhas - 1 /*&& m->mapa[l+1][c] == fundo*/)
+    procura_vizinhos(m, s, l+1, c, fundo);
+
+  // up
+  if(l > 0 /*&& m->mapa[l-1][c] == fundo*/)
     procura_vizinhos(m, s, l-1, c, fundo);
 
-  if(c > 0 && m->mapa[l][c-1] == fundo)
-    procura_vizinhos(m, s, l, c-1, fundo);
+  // left
+  // if(c > 0 /*&& m->mapa[l][c-1] == fundo*/)
+  //   procura_vizinhos(m, s, l, c-1, fundo);
 }
 
 void pinta(tmapa *m, int l, int c, int fundo, int cor) {
@@ -175,14 +190,25 @@ void pinta_mapa(tmapa *m, int cor) {
   pinta(m, 0, 0, m->mapa[0][0], cor);
 }
 
+void print_played_game(tplayed *plays) {
+  int i;
+
+  for (i = 0; i < plays->max_plays; i++ ){
+    if (plays->plays[i] != -1) {
+      printf("%d, ", plays->plays[i] );
+    }
+  }
+}
+
 int rank_best_color_to_play(tcor *cores) {
   int i, j;
 
   j = 0; // first element
 
   // get highest colour frequency
-  for (i = 1; i < cores->quantidade; i++ ) {
-    if (cores->cores[j] < cores->cores[i]) {
+  for (i = 0; i < cores->quantidade; i++ ) {
+    LOG("%d > %d ", cores->cores[i] , cores->cores[j]);
+    if (cores->cores[i] > cores->cores[j]) {
       j = i;
     }
   }
@@ -210,6 +236,8 @@ int not_done_yet(tmapa *map) {
 void add_step(tplayed *plays, int cor) {
   int i;
 
+  LOG("adding step %d\n", cor);
+
   for (i = 0; i < plays->max_plays; i++ ) {
     if (plays->plays[i] != -1) {
       plays->plays[i] = cor;
@@ -234,17 +262,18 @@ int main(int argc, char **argv) {
   m.nlinhas = atoi(argv[1]);
   m.ncolunas = atoi(argv[2]);
   m.ncores = atoi(argv[3]);
+  cores.quantidade = m.ncores;
   plays.max_plays = 255;
+
+  inicializa_cores(&cores);
+  initialize_game_play(&plays);
 
   if(argc == 5)
     semente = atoi(argv[4]);
   else
     semente = -1;
 
-  cores.quantidade = m.ncores;
-  inicializa_cores(&cores);
-  initialize_game_play(&plays);
-
+  LOG("cores resetadas [%d]: ", cores.quantidade);
   imprime_cores(&cores);
 
   gera_mapa(&m, semente);
@@ -252,17 +281,28 @@ int main(int argc, char **argv) {
 
   // faz histograma das bordas, candidato com mais cores tem preferencia
   // r = scanf("%d", &cor);
-  // void procura_vizinhos(tmapa *m, tcor *s, int l, int c, int fundo, int cor) {
   procura_vizinhos(&m, &cores, 0,0, m.mapa[0][0]);
+
+  LOG("vizinhos procurados, agora eleger cor\n", NULL);
+
   // elege_melhor_cor
   r = rank_best_color_to_play(&cores);
-  add_step(&plays, r);
+
+  LOG("primeira cor %d\n", r);
+
+  add_step(&plays, r );
+
   reset_colours_histogram(&cores);
 
+  LOG("bora worka!\n", NULL);
+
   while (not_done_yet(&m)) {
+    pinta_mapa(&m, r);
+
     procura_vizinhos(&m, &cores, 0,0, m.mapa[0][0]);
     // elege_melhor_cor
     r = rank_best_color_to_play(&cores);
+    LOG("vizinho %d", r);
     add_step(&plays, r);
     reset_colours_histogram(&cores);
 
@@ -270,6 +310,8 @@ int main(int argc, char **argv) {
     // mostra_mapa_cor(&m); // para mostrar sem cores use mostra_mapa(&m);
     mostra_mapa(&m);
   }
+
+  LOG("acabou!\n", NULL);
 
   // enquanto houverem cores diferentes
   // for (i=1; ainda_nao_terminou; i++)
@@ -282,6 +324,12 @@ int main(int argc, char **argv) {
   //   // registra cores e quantidade de movimentos
   //   r = scanf("%d", &cor);
   // }
+
+  print_played_game(&plays);
+
+  free(m.mapa);
+  free(plays.plays);
+  free(cores.cores);
 
   return 0;
 }
