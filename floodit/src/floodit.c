@@ -22,6 +22,10 @@ typedef struct {
   int *plays;
 } tplayed;
 
+void show_tmapa_data(tmapa *m) {
+  LOG("l %d, c %d, cores %d\n", m->nlinhas, m->ncolunas, m->ncores );
+}
+
 void reset_colours_histogram(tcor *cores) {
   int i;
 
@@ -79,7 +83,9 @@ void carrega_mapa(tmapa *m) {
   r = scanf("%d", &(m->nlinhas));
   r = scanf("%d", &(m->ncolunas));
   r = scanf("%d", &(m->ncores));
+
   m->mapa = (int**) malloc(m->nlinhas * sizeof(int*));
+
   for(i = 0; i < m->nlinhas; i++) {
     m->mapa[i] = (int*) malloc(m->ncolunas * sizeof(int));
     for(j = 0; j < m->ncolunas; j++)
@@ -89,8 +95,6 @@ void carrega_mapa(tmapa *m) {
 
 void mostra_mapa(tmapa *m) {
   int i, j;
-
-  // printf("%d %d %d\n", m->nlinhas, m->ncolunas, m->ncores);
 
   for(i = 0; i < m->nlinhas; i++) {
     for(j = 0; j < m->ncolunas; j++)
@@ -117,16 +121,14 @@ void mostra_mapa_cor(tmapa *m) {
     return;
   }
 
-  // printf("%d %d %d\n", m->nlinhas, m->ncolunas, m->ncores);
-
-    for(i = 0; i < m->nlinhas; i++) {
-      for(j = 0; j < m->ncolunas; j++)
-        if(m->ncores > 10)
-    printf("%s%02d%s ", cor_ansi[m->mapa[i][j]], m->mapa[i][j], cor_ansi[0]);
-        else
-    printf("%s%d%s ", cor_ansi[m->mapa[i][j]], m->mapa[i][j], cor_ansi[0]);
-      printf("\n");
-    }
+  for(i = 0; i < m->nlinhas; i++) {
+    for(j = 0; j < m->ncolunas; j++)
+      if(m->ncores > 10)
+  printf("%s%02d%s ", cor_ansi[m->mapa[i][j]], m->mapa[i][j], cor_ansi[0]);
+      else
+  printf("%s%d%s ", cor_ansi[m->mapa[i][j]], m->mapa[i][j], cor_ansi[0]);
+    printf("\n");
+  }
 }
 
 void update_stats_for(int cor, tcor *stats) {
@@ -137,14 +139,11 @@ void update_stats_for(int cor, tcor *stats) {
 }
 
 /*
-primeiros 30% -> busca apenas nas bordas
-60% -> busca com dois níveis
-10% -> busca cega
+  Most important method
+
 
 */
 void procura_vizinhos(tmapa *m, tcor *s, int l, int c, int fundo) {
-
-  // LOG("processando cor [%d, %d] %d\n", l, c, m->mapa[l][c]);
 
   if (!(l == 0 && c == 0) && m->mapa[l][c] != fundo) {
     update_stats_for(m->mapa[l][c], s);
@@ -217,8 +216,6 @@ int not_done_yet(tmapa *map) {
 
   c = map->mapa[0][0];
 
-  LOG("checando se terminou\n", NULL);
-
   for(i = 0; i < map->nlinhas; i++) {
     for(j = 0; j < map->ncolunas; j++) {
       if (map->mapa[i][j] != c)
@@ -246,14 +243,18 @@ int main(int argc, char **argv) {
   tcor cores;
   tplayed plays;
 
-  if(argc < 4 || argc > 5) {
-    printf("uso: %s <numero_de_linhas> <numero_de_colunas> <numero_de_cores> [<semente_aleatoria>]\n", argv[0]);
-    exit(1);
-  }
+  // if(argc < 4 || argc > 5) {
+  //   printf("uso: %s <numero_de_linhas> <numero_de_colunas> <numero_de_cores> [<semente_aleatoria>]\n", argv[0]);
+  //   exit(1);
+  // }
+  // m.nlinhas = atoi(argv[1]);
+  // m.ncolunas = atoi(argv[2]);
+  // m.ncores = atoi(argv[3]);
 
-  m.nlinhas = atoi(argv[1]);
-  m.ncolunas = atoi(argv[2]);
-  m.ncores = atoi(argv[3]);
+  carrega_mapa(&m);
+
+  show_tmapa_data(&m);
+
   cores.quantidade = m.ncores;
   plays.max_plays = 255;
   plays.last_index = 0;
@@ -261,31 +262,22 @@ int main(int argc, char **argv) {
   inicializa_cores(&cores);
   initialize_game_play(&plays);
 
-  if(argc == 5)
-    semente = atoi(argv[4]);
-  else
-    semente = -1;
+  // if(argc == 5)
+  //   semente = atoi(argv[4]);
+  // else
+  //   semente = -1;
+  // gera_mapa(&m, semente);
 
-  // LOG("cores resetadas [%d]: ", cores.quantidade);
-  // imprime_cores(&cores);
-
-  gera_mapa(&m, semente);
   mostra_mapa_cor(&m);
 
-  // faz histograma das bordas, candidato com mais cores tem preferencia
-  // r = scanf("%d", &cor);
   procura_vizinhos(&m, &cores, 0,0, m.mapa[0][0]);
 
   // elege_melhor_cor
   r = rank_best_color_to_play(&cores);
 
-  LOG("primeira cor %d\n", r);
-
   add_step(&plays, r );
 
   reset_colours_histogram(&cores);
-
-  LOG("bora worka!\n", NULL);
 
   while (not_done_yet(&m)) {
     pinta_mapa(&m, r);
@@ -295,23 +287,11 @@ int main(int argc, char **argv) {
     // elege_melhor_cor
     r = rank_best_color_to_play(&cores);
 
+    LOG("next color is %d\n", r);
+
     add_step(&plays, r);
     reset_colours_histogram(&cores);
   }
-
-  LOG("acabou!\n", NULL);
-
-  // enquanto houverem cores diferentes
-  // for (i=1; ainda_nao_terminou; i++)
-  // while(cor > 0 && cor <= m.ncores) {
-  //   pinta_mapa(&m, cor);
-  //   mostra_mapa_cor(&m); // para mostrar sem cores use mostra_mapa(&m);
-
-  //   // procura_vizinhos
-  //   // elege_melhor_cor
-  //   // registra cores e quantidade de movimentos
-  //   r = scanf("%d", &cor);
-  // }
 
   print_played_game(&plays);
   // show_steps(&plays);
