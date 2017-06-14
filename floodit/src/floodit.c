@@ -18,6 +18,7 @@ typedef struct {
 
 typedef struct {
   int max_plays;
+  int last_index;
   int *plays;
 } tplayed;
 
@@ -129,7 +130,7 @@ void mostra_mapa_cor(tmapa *m) {
 }
 
 void update_stats_for(int cor, tcor *stats) {
-  LOG("inc cor[%d]\n", cor);
+  // LOG("inc cor[%d]\n", cor);
 
   if (cor >= 0 && cor < stats->quantidade)
     stats->cores[cor] += 1; // todo: it's right?
@@ -143,7 +144,7 @@ primeiros 30% -> busca apenas nas bordas
 */
 void procura_vizinhos(tmapa *m, tcor *s, int l, int c, int fundo) {
 
-  LOG("processando cor [%d, %d] %d\n", l, c, m->mapa[l][c]);
+  // LOG("processando cor [%d, %d] %d\n", l, c, m->mapa[l][c]);
 
   if (!(l == 0 && c == 0) && m->mapa[l][c] != fundo) {
     update_stats_for(m->mapa[l][c], s);
@@ -159,8 +160,8 @@ void procura_vizinhos(tmapa *m, tcor *s, int l, int c, int fundo) {
     procura_vizinhos(m, s, l+1, c, fundo);
 
   // up
-  if(l > 0 /*&& m->mapa[l-1][c] == fundo*/)
-    procura_vizinhos(m, s, l-1, c, fundo);
+  // if(l > 0 /*&& m->mapa[l-1][c] == fundo*/)
+  //   procura_vizinhos(m, s, l-1, c, fundo);
 
   // left
   // if(c > 0 /*&& m->mapa[l][c-1] == fundo*/)
@@ -169,17 +170,12 @@ void procura_vizinhos(tmapa *m, tcor *s, int l, int c, int fundo) {
 
 void pinta(tmapa *m, int l, int c, int fundo, int cor) {
   m->mapa[l][c] = cor;
-
-  //
   if(l < m->nlinhas - 1 && m->mapa[l+1][c] == fundo)
     pinta(m, l+1, c, fundo, cor);
-
   if(c < m->ncolunas - 1 && m->mapa[l][c+1] == fundo)
     pinta(m, l, c+1, fundo, cor);
-
   if(l > 0 && m->mapa[l-1][c] == fundo)
     pinta(m, l-1, c, fundo, cor);
-
   if(c > 0 && m->mapa[l][c-1] == fundo)
     pinta(m, l, c-1, fundo, cor);
 }
@@ -207,7 +203,6 @@ int rank_best_color_to_play(tcor *cores) {
 
   // get highest colour frequency
   for (i = 0; i < cores->quantidade; i++ ) {
-    LOG("%d > %d ", cores->cores[i] , cores->cores[j]);
     if (cores->cores[i] > cores->cores[j]) {
       j = i;
     }
@@ -222,6 +217,8 @@ int not_done_yet(tmapa *map) {
 
   c = map->mapa[0][0];
 
+  LOG("checando se terminou\n", NULL);
+
   for(i = 0; i < map->nlinhas; i++) {
     for(j = 0; j < map->ncolunas; j++) {
       if (map->mapa[i][j] != c)
@@ -232,20 +229,15 @@ int not_done_yet(tmapa *map) {
   return 0;
 }
 
-
-void add_step(tplayed *plays, int cor) {
+void show_steps(tplayed *plays) {
   int i;
 
-  LOG("adding step %d\n", cor);
+  for (i = 0; i < plays->max_plays; i++ )
+    LOG("%d ", plays->plays[i]);
+}
 
-  for (i = 0; i < plays->max_plays; i++ ) {
-    if (plays->plays[i] != -1) {
-      plays->plays[i] = cor;
-      return;
-    }
-  }
-
-  exit(5);
+void add_step(tplayed *plays, int cor) {
+  plays->plays[plays->last_index++] = cor;
 }
 
 int main(int argc, char **argv) {
@@ -264,6 +256,7 @@ int main(int argc, char **argv) {
   m.ncores = atoi(argv[3]);
   cores.quantidade = m.ncores;
   plays.max_plays = 255;
+  plays.last_index = 0;
 
   inicializa_cores(&cores);
   initialize_game_play(&plays);
@@ -273,8 +266,8 @@ int main(int argc, char **argv) {
   else
     semente = -1;
 
-  LOG("cores resetadas [%d]: ", cores.quantidade);
-  imprime_cores(&cores);
+  // LOG("cores resetadas [%d]: ", cores.quantidade);
+  // imprime_cores(&cores);
 
   gera_mapa(&m, semente);
   mostra_mapa_cor(&m);
@@ -282,8 +275,6 @@ int main(int argc, char **argv) {
   // faz histograma das bordas, candidato com mais cores tem preferencia
   // r = scanf("%d", &cor);
   procura_vizinhos(&m, &cores, 0,0, m.mapa[0][0]);
-
-  LOG("vizinhos procurados, agora eleger cor\n", NULL);
 
   // elege_melhor_cor
   r = rank_best_color_to_play(&cores);
@@ -298,17 +289,14 @@ int main(int argc, char **argv) {
 
   while (not_done_yet(&m)) {
     pinta_mapa(&m, r);
+    mostra_mapa_cor(&m);
 
     procura_vizinhos(&m, &cores, 0,0, m.mapa[0][0]);
     // elege_melhor_cor
     r = rank_best_color_to_play(&cores);
-    LOG("vizinho %d", r);
+
     add_step(&plays, r);
     reset_colours_histogram(&cores);
-
-    pinta_mapa(&m, r);
-    // mostra_mapa_cor(&m); // para mostrar sem cores use mostra_mapa(&m);
-    mostra_mapa(&m);
   }
 
   LOG("acabou!\n", NULL);
@@ -326,6 +314,7 @@ int main(int argc, char **argv) {
   // }
 
   print_played_game(&plays);
+  // show_steps(&plays);
 
   free(m.mapa);
   free(plays.plays);
