@@ -111,8 +111,8 @@ void mostra_mapa_cor(tmapa *m) {
 }
 
 void update_stats_for(int cor, tcor *stats) {
-  if (cor >= 0 && cor < stats->quantidade)
-    stats->cores[cor] += 1;
+  if (cor > 0 && cor <= stats->quantidade)
+    stats->cores[(cor - 1)] += 1; // colour is 1..n, just do n - 1 to fit
 }
 
 /*
@@ -126,20 +126,12 @@ void procura_vizinhos(tmapa *m, tcor *s, int l, int c, int fundo) {
   }
 
   // right
-  if(c < m->ncolunas - 1 /*&& m->mapa[l][c+1] == fundo*/)
+  if(c < m->ncolunas - 1)
     procura_vizinhos(m, s, l, c+1, fundo);
 
   // down
-  if(l < m->nlinhas - 1 /*&& m->mapa[l+1][c] == fundo*/)
+  if(l < m->nlinhas - 1)
     procura_vizinhos(m, s, l+1, c, fundo);
-
-  // up
-  // if(l > 0 /*&& m->mapa[l-1][c] == fundo*/)
-  //   procura_vizinhos(m, s, l-1, c, fundo);
-
-  // left
-  // if(c > 0 /*&& m->mapa[l][c-1] == fundo*/)
-  //   procura_vizinhos(m, s, l, c-1, fundo);
 }
 
 void pinta(tmapa *m, int l, int c, int fundo, int cor) {
@@ -185,7 +177,7 @@ int rank_best_color_to_play(tcor *cores) {
     }
   }
 
-  return j;
+  return j + 1; // MUST return 1..n
 }
 
 // return false when ended, otherwise true
@@ -205,6 +197,7 @@ int not_done_yet(tmapa *map) {
 }
 
 void add_step(tplayed *plays, int cor) {
+  // LOG("next color is %d\n", cor);
   plays->plays[plays->last_index++] = cor;
 }
 
@@ -223,6 +216,12 @@ int main(int argc, char **argv) {
   inicializa_cores(&cores);
   initialize_game_play(&plays);
 
+  // already done
+  if (!not_done_yet(&m)) {
+    printf("0\n");
+    return;
+  }
+
   procura_vizinhos(&m, &cores, 0,0, m.mapa[0][0]);
   // elege_melhor_cor
   cor = rank_best_color_to_play(&cores);
@@ -233,14 +232,12 @@ int main(int argc, char **argv) {
 
   while (not_done_yet(&m)) {
     pinta_mapa(&m, cor);
-    mostra_mapa_cor(&m);
+    // mostra_mapa_cor(&m);
 
     procura_vizinhos(&m, &cores, 0,0, m.mapa[0][0]);
     // elege_melhor_cor
     // não precisa se já terminou!
     cor = rank_best_color_to_play(&cores);
-
-    LOG("next color is %d\n", cor);
 
     add_step(&plays, cor);
     reset_colours_histogram(&cores);
