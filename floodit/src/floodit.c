@@ -118,7 +118,7 @@ void update_stats_for(int cor, tcor *stats) {
 /*
   Most important method
 */
-void procura_vizinhos(tmapa *m, tcor *s, int l, int c, int fundo) {
+void heurisctic_right_down(tmapa *m, tcor *s, int l, int c, int fundo) {
 
   if (!(l == 0 && c == 0) && m->mapa[l][c] != fundo) {
     update_stats_for(m->mapa[l][c], s);
@@ -127,11 +127,37 @@ void procura_vizinhos(tmapa *m, tcor *s, int l, int c, int fundo) {
 
   // right
   if(c < m->ncolunas - 1)
-    procura_vizinhos(m, s, l, c+1, fundo);
+    heurisctic_right_down(m, s, l, c+1, fundo);
 
   // down
   if(l < m->nlinhas - 1)
-    procura_vizinhos(m, s, l+1, c, fundo);
+    heurisctic_right_down(m, s, l+1, c, fundo);
+}
+
+void heurisctic_by_line(tmapa *m, tcor *s, int l, int c, int fundo) {
+  int keepLooking = 1;
+  int line, column;
+
+  line = l;
+  column = c;
+
+  while (keepLooking) {
+    if (!(line == 0 && column == 0) && m->mapa[line][column] != fundo) {
+      update_stats_for(m->mapa[line][column], s);
+      keepLooking = 0;
+    }
+
+    if ( column < m->ncolunas - 1 ) {
+      column++;
+    } else {
+      if ( line < m->nlinhas - 1 ) {
+        column = 0;
+        line++;
+      } else {
+        keepLooking = 0;
+      }
+    }
+  }
 }
 
 void pinta(tmapa *m, int l, int c, int fundo, int cor) {
@@ -181,7 +207,7 @@ int rank_best_color_to_play(tcor *cores) {
 }
 
 // return false when ended, otherwise true
-int not_done_yet(tmapa *map) {
+int not_yet_done(tmapa *map) {
   int i, j, c;
 
   c = map->mapa[0][0];
@@ -197,8 +223,11 @@ int not_done_yet(tmapa *map) {
 }
 
 void add_step(tplayed *plays, int cor) {
-  // LOG("next color is %d\n", cor);
   plays->plays[plays->last_index++] = cor;
+}
+
+int choose_strategy(int l_c_total) {
+  return l_c_total > 225; // board greater than 15x15
 }
 
 int main(int argc, char **argv) {
@@ -206,23 +235,33 @@ int main(int argc, char **argv) {
   tmapa m;
   tcor cores;
   tplayed plays;
+  int keepLooking = 1;
+  int board_size;
 
   carrega_mapa(&m);
 
   cores.quantidade = m.ncores;
   plays.max_plays = 1024;
   plays.last_index = 0;
+  board_size = m.ncolunas * m.nlinhas;
 
   inicializa_cores(&cores);
   initialize_game_play(&plays);
 
+  // mostra_mapa_cor(&m);
+
   // already done
-  if (!not_done_yet(&m)) {
+  if (!not_yet_done(&m)) {
     printf("0\n");
-    return;
+    return 0;
   }
 
-  procura_vizinhos(&m, &cores, 0,0, m.mapa[0][0]);
+  if (choose_strategy( board_size )) {
+    heurisctic_by_line(&m, &cores, 0,0, m.mapa[0][0]);
+  } else {
+    heurisctic_right_down(&m, &cores, 0,0, m.mapa[0][0]);
+  }
+
   // elege_melhor_cor
   cor = rank_best_color_to_play(&cores);
 
@@ -230,17 +269,26 @@ int main(int argc, char **argv) {
 
   reset_colours_histogram(&cores);
 
-  while (not_done_yet(&m)) {
+  while (keepLooking) {
     pinta_mapa(&m, cor);
     // mostra_mapa_cor(&m);
 
-    procura_vizinhos(&m, &cores, 0,0, m.mapa[0][0]);
-    // elege_melhor_cor
-    // não precisa se já terminou!
-    cor = rank_best_color_to_play(&cores);
+    if (not_yet_done(&m)) {
 
-    add_step(&plays, cor);
-    reset_colours_histogram(&cores);
+      if (choose_strategy( board_size )) {
+        heurisctic_by_line(&m, &cores, 0,0, m.mapa[0][0]);
+      } else {
+        heurisctic_right_down(&m, &cores, 0,0, m.mapa[0][0]);
+      }
+      // elege_melhor_cor
+      // não precisa se já terminou!
+      cor = rank_best_color_to_play(&cores);
+
+      add_step(&plays, cor);
+      reset_colours_histogram(&cores);
+    } else {
+      keepLooking = 0;
+    }
   }
 
   print_played_game(&plays);
