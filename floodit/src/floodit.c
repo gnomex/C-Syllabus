@@ -1,8 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
-
-#define LOG(f_, ...) printf((f_), __VA_ARGS__)
 
 typedef struct {
   int nlinhas;
@@ -116,12 +113,14 @@ void update_stats_for(int cor, tcor *stats) {
 }
 
 /*
-  Most important method
+  Iterate recursively through lines (right and down only), looking for current color border
+  When found, increment colour histrogram and return
 */
 void heurisctic_right_down(tmapa *m, tcor *s, int l, int c, int fundo) {
 
+  // Found the border
   if (!(l == 0 && c == 0) && m->mapa[l][c] != fundo) {
-    update_stats_for(m->mapa[l][c], s);
+    update_stats_for(m->mapa[l][c], s); // update colour histogram
     return;
   }
 
@@ -134,6 +133,12 @@ void heurisctic_right_down(tmapa *m, tcor *s, int l, int c, int fundo) {
     heurisctic_right_down(m, s, l+1, c, fundo);
 }
 
+/*
+  Iterate through lines, looking for a different color
+  if found, paint with it
+
+  it's a keep right strategy, very fast, but makes many steps to finish
+*/
 void heurisctic_by_line(tmapa *m, tcor *s, int l, int c, int fundo) {
   int keepLooking = 1;
   int line, column;
@@ -189,14 +194,19 @@ void print_played_game(tplayed *plays) {
 
     printf("%d ", plays->plays[i] );
   }
+
+  printf("\n");
 }
 
+/*
+  Rank the best colour to play, based on color frequency registered on the histogram
+*/
 int rank_best_color_to_play(tcor *cores) {
   int i, j;
 
   j = 0; // first element
 
-  // get highest colour frequency
+  // get highest (first) colour frequency
   for (i = 0; i < cores->quantidade; i++ ) {
     if (cores->cores[i] > cores->cores[j]) {
       j = i;
@@ -206,7 +216,7 @@ int rank_best_color_to_play(tcor *cores) {
   return j + 1; // MUST return 1..n
 }
 
-// return false when ended, otherwise true
+// return false when ended
 int not_yet_done(tmapa *map) {
   int i, j, c;
 
@@ -215,11 +225,11 @@ int not_yet_done(tmapa *map) {
   for(i = 0; i < map->nlinhas; i++) {
     for(j = 0; j < map->ncolunas; j++) {
       if (map->mapa[i][j] != c)
-        return 1;
+        return 1; // if there is some different color, just return to play again
     }
   }
 
-  return 0;
+  return 0; // all board painted with same color
 }
 
 void add_step(tplayed *plays, int cor) {
@@ -248,8 +258,6 @@ int main(int argc, char **argv) {
   inicializa_cores(&cores);
   initialize_game_play(&plays);
 
-  // mostra_mapa_cor(&m);
-
   // already done
   if (!not_yet_done(&m)) {
     printf("0\n");
@@ -262,26 +270,27 @@ int main(int argc, char **argv) {
     heurisctic_right_down(&m, &cores, 0,0, m.mapa[0][0]);
   }
 
-  // elege_melhor_cor
+  // rank best color to play
   cor = rank_best_color_to_play(&cores);
 
+  // add "played" step
   add_step(&plays, cor);
 
+  // reset histogram to further usage
   reset_colours_histogram(&cores);
 
   while (keepLooking) {
+    // do the move
     pinta_mapa(&m, cor);
-    // mostra_mapa_cor(&m);
 
-    if (not_yet_done(&m)) {
+    if (not_yet_done(&m)) { // only if not already done. It's avoid last useless play
 
       if (choose_strategy( board_size )) {
         heurisctic_by_line(&m, &cores, 0,0, m.mapa[0][0]);
       } else {
         heurisctic_right_down(&m, &cores, 0,0, m.mapa[0][0]);
       }
-      // elege_melhor_cor
-      // não precisa se já terminou!
+
       cor = rank_best_color_to_play(&cores);
 
       add_step(&plays, cor);
@@ -291,6 +300,7 @@ int main(int argc, char **argv) {
     }
   }
 
+  // show game play statistics
   print_played_game(&plays);
 
   free(m.mapa);

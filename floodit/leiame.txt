@@ -1,0 +1,17 @@
+# Trabalho de algoritmos
+
+Implementaçao de um jogador para o game floodit
+
+Instruções:
+
+Para compilar:
+
+make
+
+Para limpar a compilação:
+
+make clean
+
+Para executar:
+
+./floodit < instancia_do_mapa
